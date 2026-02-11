@@ -71,16 +71,51 @@ So here are the actual decisions, in order:
 
 4. **Set the extent.** How much of the projected plane do you want to see? This is your map window.
 
-<!-- [CODE BLOCK: build a CRS from scratch in R/Python, show each step:
-     family → centre → params → extent → plot
-     Use terra or sf for R, pyproj for Python
-     Show the PROJ string growing: 
-       +proj=laea 
-       +proj=laea +lat_0=-42.88 +lon_0=147.33
-       +proj=laea +lat_0=-42.88 +lon_0=147.33 +datum=WGS84
-     Then crop to extent and plot] -->
+And here's the trick that makes this practical rather than theoretical: when you set the centre of a projection to your point of interest, the centre *becomes* (0, 0) in the projected coordinate system. Everything flows from that. Your extent is just a distance — a symmetric box around the origin:
 
-That's four decisions. Not one. When someone says "use EPSG:3031" they've made all four decisions for you (family: stereographic, centre: south pole, true scale: 71°S, datum: WGS84) — which is fine if those choices match your problem, and quietly wrong if they don't. The point of understanding the components is that you can make each choice independently, for your data, for your question.
+```r
+## choose a family and a centre
+crs <- "+proj=laea +lat_0=-42.88 +lon_0=147.33 +datum=WGS84"
+
+## choose a distance (metres)
+distance <- 500000
+
+## that's a map
+extent <- c(-1, 1, -1, 1) * distance
+```
+
+Three decisions: family, centre, distance. No hunting for bounding-box coordinates in an unfamiliar projection. No chicken-and-egg problem where you need an extent to choose a CRS but need the CRS to express the extent. You defined the CRS so that (0, 0) is your point of interest, so the extent is trivially a radius around the origin.
+
+<!-- [FIGURE: same centre (Hobart), same distance (500km), three families — 
+     laea, stere, merc — showing that family/centre/distance is the 
+     complete specification of a map. The extent is the same three numbers
+     in each case; only the distortion pattern changes.] -->
+
+This works cleanly for azimuthal families (stereographic, Lambert azimuthal, gnomonic) where the centre maps directly to the origin. For cylindrical projections like Mercator the same idea applies but the symmetry shifts — standard Mercator's `+lon_0` recentres the map east-west while the equator stays at y = 0, and Transverse Mercator flips that axis. For conic projections you have two standard parallels and the origin sits between them. The principle is the same — you're choosing where (0, 0) goes — but the shape of the "sweet spot" around the origin varies with the family, which is exactly what the family is *for*.
+
+When someone says "use EPSG:3031" they've made all these decisions for you (family: stereographic, centre: south pole, true scale: 71°S, datum: WGS84) — which is fine if those choices match your problem, and quietly wrong if they don't. The point of understanding the components is that you can make each choice independently, for your data, for your question. And once you see that the centre zeroes out the coordinate system, making your own CRS is actually *easier* than looking up someone else's.
+
+## Rasterization is projection
+
+There's a deeper way to think about what a CRS does, and it connects to something that seems unrelated: rasterizing a polygon onto a grid.
+
+When you rasterize a polygon — burn its shape into the cells of a raster — you are projecting it onto the index space of the grid. The grid has its own coordinate system: row and column numbers, with an origin, a scale (cell size), and an orientation (the affine transform from Ch 1). Rasterization takes geometry defined in geographic or projected coordinates and maps it into that index space. It *is* a coordinate transformation. The target CRS just happens to be "row, column" instead of "easting, northing."
+
+And extraction — reading raster values at point or polygon locations — is the inverse transformation. You take coordinates in geographic space, project them into the grid's index space, and read off the values. Rasterization and extraction are complements: one burns geometry into pixels, the other reads pixels back to geometry. They're the same operation in opposite directions, and both are projections.
+
+This isn't just an analogy. It has practical consequences. The reason `terra::extract()` and `exactextractr::exact_extract()` are fast is that they work in the grid's native index space — they transform the query geometry to the grid, not the grid to the query. That's the "reproject your vectors to the raster" rule from above, expressed as an implementation choice rather than a user instruction.
+
+## Sometimes, warp the grid
+
+The old rule of thumb — reproject your vectors to the raster, because warping is expensive — made sense when GDAL's warper was slow and raster data was always local. Neither is true anymore. Warping is fast, even for large rasters, and much of our data lives on remote servers where the warper can operate on tiles streamed over the network.
+
+This changes the calculus. Consider the antimeridian problem: a polygon that crosses the ±180° line in longitude-latitude. In longlat, this polygon wraps around the edge of the coordinate system. It either needs to be split into two pieces (one on each side of the antimeridian), or your software needs special-case handling for the wraparound. Libraries have varying degrees of support for this, and it's a reliable source of bugs.
+
+But that polygon isn't complicated. It's only complicated *in longlat*. In a polar stereographic CRS centred on the south pole, a polygon that crosses the antimeridian is just... a polygon. No wrapping, no splitting, no special cases. The "hard" geometry problem was never about the geometry — it was about the coordinate system we chose to work in.
+
+So instead of fighting the antimeridian in longlat, warp the raster to a CRS where the polygon is well-behaved, do your extraction or rasterization there, and move on. The cost of the warp is often less than the cost of the geometry gymnastics you'd need otherwise — and the result is more correct, because you're not relying on polygon-splitting heuristics that may or may not handle your specific case.
+
+This is a general principle: when the geometry is hard, check whether it's hard because of the coordinate system. If it is, change the coordinate system, not the geometry. Warping used to be expensive enough that this wasn't practical advice. Now it is.
 
 <!-- 
 ## Draft notes
@@ -90,6 +125,13 @@ That's four decisions. Not one. When someone says "use EPSG:3031" they've made a
   reproject vs warp, the practical workflow)
 - The projection-catalog-in-the-wild material from frag-ch02 slots in after this as 
   "what you'll encounter" — real datasets and why they chose what they chose
+- "Rasterization is projection" connects Ch 2 to Ch 9 (extraction/rasterization complementarity)
+  and to Ch 1 (the affine transform as the grid's own CRS)
+- "Sometimes warp the grid" flips the old conventional wisdom and connects to the 
+  antimeridian/wrapping problems that come up in Ch 4 (longitude wrapping) and Ch 7
+  (the same problem in R and Python)
+- The general principle "when geometry is hard, check the coordinate system" is a 
+  thesis-level statement for the whole book
 - Tissot indicatrix is the natural next topic: "we've said projections distort — 
   how do you measure that distortion?"
 - The chicken-and-egg of extent/projection from frag-ch02 fits at the end
@@ -98,4 +140,6 @@ That's four decisions. Not one. When someone says "use EPSG:3031" they've made a
 - The Mercator→Transverse Mercator→Oblique Mercator rotation sequence would be 
   a great animated figure or triptych
 - Code should build the CRS incrementally, showing what changes at each step
+- The "rasterization is projection into index space" idea could be a figure too:
+  show the same polygon in geographic coords and in row-column coords side by side
 -->
