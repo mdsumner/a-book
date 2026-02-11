@@ -34,6 +34,7 @@ Example: `frag-ch08-geometry-is-tables.md`
 | frag-ch11-cpp-strings.md | gdal-r-python (cpp-strings-r-gdal.md) | Appendix or Ch 11 sidebar | ~500 | SNIPPET | Six string types, ownership model, conversion matrix, tokenisation trap. Full reference kept in source |
 | frag-ch03-gis-origin-story.md | silicate proto-book (sc-book: 01-intro.Rmd, 02-limitations.Rmd) | Ch 3: What does GDAL do? (or intro) | ~600 | DRAFT | Arc-node→path compromise, ArcView/shapefile, sf limitations (three structural), topology built-and-discarded pattern |
 | frag-ch02-crs-practical-problem.md | antequated.org (polar-maps-now 2017, map-projections 2023, SOmap 2019) | Ch 2: What is a CRS? | ~1100 | DRAFT | Four ingredients, three tool types (reproject/reproject/warp), projection families vs parameters, real-world Antarctic projection catalog, chicken-egg of extent/projection, Tissot link |
+| frag-ch02-crs-opening-draft.md | brainstorm session 2026-02-11 | Ch 2: What is a CRS? (chapter opening) | ~1300 | RAW DRAFT | Unpacks CRS into family/centre/params/datum; developable surfaces demystified; Mercator→TM→UTM as "one family, sixty centres"; CRS is not a map (need extent too); four decisions in order. Needs figures. |
 
 ## Pending sources (not yet processed)
 
