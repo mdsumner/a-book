@@ -32,6 +32,8 @@ Example: `frag-ch08-geometry-is-tables.md`
 | frag-ch11-wheel-problem.md | gdal-r-python (installation/gdal-python-binaries.md) | Ch 11: The installation problem | ~1200 | DRAFT | Why pip install GDAL is broken; symbol collision; R vs Python packaging as structural analysis; social vs technical barriers |
 | frag-ch07-parallel-gdal.md | gdal-r-python (parallel-gdal-r-python.md) | Ch 7: Same problem, different clothes | ~900 | DRAFT | GIL mechanics for GDAL, threading vs process parallelism, Python ThreadPoolExecutor vs R mirai comparison |
 | frag-ch11-cpp-strings.md | gdal-r-python (cpp-strings-r-gdal.md) | Appendix or Ch 11 sidebar | ~500 | SNIPPET | Six string types, ownership model, conversion matrix, tokenisation trap. Full reference kept in source |
+| frag-ch03-gis-origin-story.md | silicate proto-book (sc-book: 01-intro.Rmd, 02-limitations.Rmd) | Ch 3: What does GDAL do? (or intro) | ~600 | DRAFT | Arc-node→path compromise, ArcView/shapefile, sf limitations (three structural), topology built-and-discarded pattern |
+| frag-ch02-crs-practical-problem.md | antequated.org (polar-maps-now 2017, map-projections 2023, SOmap 2019) | Ch 2: What is a CRS? | ~1100 | DRAFT | Four ingredients, three tool types (reproject/reproject/warp), projection families vs parameters, real-world Antarctic projection catalog, chicken-egg of extent/projection, Tissot link |
 
 ## Pending sources (not yet processed)
 
@@ -40,6 +42,8 @@ Example: `frag-ch08-geometry-is-tables.md`
 | rw-book repo | HARVESTED | 6 fragments extracted; repo archived |
 | xarray_unref_matrix.ipynb | HARVESTED | Content merged into frag-ch01-six-numbers.md |
 | mdsumner/gdal-r-python | HARVESTED | 4 fragments + 1 snippet extracted from 12 files (see reference inventory below) |
+| mdsumner/sc-book (silicate proto-book) | HARVESTED | 1 fragment (GIS origin story) from 6 Rmd files; bulk is redundant with frag-ch08-geometry-is-tables.md (see reference inventory below) |
+| rbind/antequated.org | HARVESTED | 1 fragment (CRS practical problem) from 3 posts; Southern Ocean map tutorial kept as reference (see reference inventory below) |
 | mdsumner/polar-mapping-oghub | NOT INSPECTED | |
 | hypertidy.org blog posts (17+) | NOT INSPECTED | |
 | Past conversations: tiepoints/CRS | FOLDED IN | Tiepoints essay was harvested into gdal-r-python, now frag-ch04-tiepoints-formats-carry.md |
@@ -68,6 +72,31 @@ Files NOT harvested into fragments but tracked for reference:
 | positron/orphaned-positron-guide.md | Pure howto for specific tool | Blog post or standalone reference |
 | zarr-examples/public-zarr-sources.md | Catalog of public Zarr test sources | Ch 10 appendix; testing reference |
 | zarr-examples/README.md | Link collection to attempted Zarr projects | Historical reference |
+
+## sc-book (silicate proto-book) reference inventory
+
+The silicate proto-book (~2017, bookdown format) was the first extended write-up of the PATH/PRIMITIVE decomposition. Most conceptual content is already captured in frag-ch08-geometry-is-tables.md. One new fragment harvested (GIS origin story → Ch 3).
+
+| File | Why kept as reference | Potential use |
+|------|----------------------|---------------|
+| 01-intro.Rmd | GIS origin narrative harvested into frag-ch03; aspirational feature list is historical | Ch 3 fragment source; package lineage reference (spbabel → gris → rangl → silicate) |
+| 02-limitations.Rmd | sf structural limitations + shared-edge demo code; argument already in frag-ch08 | Ch 8 worked examples (get_shared_edge function, nc.shp topology demo) |
+| 03-normalization.Rmd | PATH/PRIMITIVE table counts, segment model, raster sidebar; argument in frag-ch08, raster in Ch 1/Ch 4 | Ch 8 worked examples; raster taxonomy (affine/rectilinear/curvilinear) already covered |
+| 04-translator.Rmd | Concrete conversions: sf→base plot, sf→spatstat, sf→rgl, constrained triangulation | Ch 8 worked examples; spatstat/rgl translator code |
+| 05-extras.Rmd | Grant proposal framing; repeated motivations from 01/02 | Historical reference only |
+| index.Rmd | One-paragraph preamble ("removal of topology has been overly destructive") | Possible book epigraph |
+
+## antequated.org reference inventory
+
+Blogdown site on rbind org for polar mapping techniques. ~90% of uploaded content was Hugo theme boilerplate (ghostwriter, future-imperfect, lithium-theme examples) — all skipped. One fragment harvested combining best of three posts into Ch 2 material.
+
+| File | Why kept as reference | Potential use |
+|------|----------------------|---------------|
+| 2017-06-14-general-southern-ocean-map.Rmd (Cleeland) | Worked example: full Southern Ocean map with sp/rgdal/raster, graticules, CCAMLR polygons, fronts, labels | Ch 2 or Ch 12 worked example; historical snapshot of sp-era workflow |
+| 2017-06-14-polar-maps-now.Rmd | Pedagogical framing harvested into frag-ch02; code examples using sp/rgdal | Ch 2 code examples (sp era) |
+| 2019-03-20-get-antequated-with-somap.Rmd | SOmap package demo, auto-projection | Ch 2 code examples (SOmap); potential Ch 12 pattern |
+| 2023-04-04-map-projections.qmd | Most mature version; projection catalog and three-tool-types harvested into frag-ch02 | Ch 2 code examples (terra era); Mercator vs UTM cellSize demo |
+| content/about.md | One-liner ("antequated philosophy rails against tropical-bias") | Possible book epigraph |
 
 ## Cross-reference notes
 
