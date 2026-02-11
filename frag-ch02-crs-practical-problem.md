@@ -32,6 +32,8 @@ There is a literal infinity of possible Polar Stereographic projections. In prac
 
 The three fundamental compromises: **equal-area** (area is correct everywhere in the projection — good for density maps, sea ice extent), **equidistant** (distance is correct along one axis or from one point — less commonly needed), **conformal** (angles and local shapes are preserved — good for navigation, flow fields). No projection achieves all three.
 
+The other unsaid thing here is that a projection or a crs is not a map, for a map we also need a bounding box and that is not a trivial task (see chicken egg below) but also this can lead into some code examples that make it clear that bbox is a bit rubbery 'Tasmania' (mainlaind or all offshore islands), and cropping too early is its own kind of problem for data manipulation. 
+
 ## Projections in the wild
 
 Many datasets arrive already projected, and knowing what projection they use — and why — is part of understanding the data:
@@ -52,7 +54,7 @@ Some complex models (like WAOM2 ROMS for the Southern Ocean) are a regular grid 
 
 Making a map involves circular dependencies. You choose a projection, which determines how space is distorted, which affects what extent looks reasonable, which affects the projection choice. You pick an extent, but then want more or less, which changes the projection parameters, which subtly impacts the graticule, labels, and data overlay.
 
-This back-and-forth is inherent, not a sign that your tools are broken. The more familiar you are with the component tools, the faster you iterate. SOmap automated some of this for Antarctic maps — `SOauto_map()` adapts both projection and extent to the input data — but automation only gets you a starting point. The finishing is always manual.
+This back-and-forth is inherent, not a sign that your tools are broken. The more familiar you are with the component tools, the faster you iterate. SOmap automated some of this for Antarctic maps — `SOauto_map()` adapts both projection and extent to the input data — but automation only gets you a starting point. The finishing is always manual.  
 
 On scale bars and north arrows: a scale bar is only accurate if you orient it where linear distance on the ground corresponds to equal spacing in the map, which is rare. A north arrow is either totally redundant (north is up, the graticule shows it) or hopelessly misleading (in a polar projection, "north" points in every direction from the pole). Exploring what's wrong with these cartographic conventions leads directly to understanding the Tissot indicatrix — the formal measure of how a projection distorts the local geometry at every point on the map.
 
