@@ -1,0 +1,6 @@
+---
+title: "Extraction and rasterization"
+---
+
+{{< include frag-ch09-extraction-rasterization.md >}}
+

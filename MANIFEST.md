@@ -20,8 +20,8 @@ Example: `frag-ch08-geometry-is-tables.md`
 |------|--------|---------------|-------|--------|-------|
 | frag-ch08-geometry-is-tables.md | table-r-book (01-overview, 02-GIS-contract, 03-examples, 04-shared-framework) | Ch 8: Geometry as topology | ~1800 | DRAFT | Five-form taxonomy, GIS contract, pipe-dream API, proto-silicate lineage |
 | frag-ch08-3d-globe-story.md | rogue-book (02-poly3d) | Ch 8 or Ch 12: case study | ~600 | DRAFT | Why tables unlock dimensions; polygon→PSLG→triangulate→drape on sphere |
-| frag-ch08-rosetta-stone.md | rogue-book (01-intro), updated | Ch 8: Geometry as topology | ~100 | SNIPPET | Entity terminology across sp/sf/ggplot2/terra/gdalraster/GDAL |
-| frag-ch08-triangulation-taxonomy.md | rogue-book (09-triangulation, 02-poly3d) | Ch 8 or Ch 9 | ~250 | SNIPPET | Delaunay vs constrained Delaunay vs ear-clipping |
+| (frag-ch08-rosetta-stone.md) | rogue-book (01-intro), updated | Ch 8: Geometry as topology | ~100 | MERGED | Merged into frag-ch08-geometry-is-tables.md 2026-10-01 |
+| (frag-ch08-triangulation-taxonomy.md) | rogue-book (09-triangulation, 02-poly3d) | Ch 8 or Ch 9 | ~250 | MERGED | Merged into frag-ch08-geometry-is-tables.md 2026-10-01 |
 | frag-ch01-six-numbers.md | rw-book (georef.qmd, xarray_unref_matrix.ipynb) | Ch 1 + Ch 4 | ~1500 | DRAFT | Raw matrix → extent → geotransform → MEM DATAPOINTER → .bil/.hdr → GCPs → a_ullr |
 | frag-ch04-grid-taxonomy.md | rw-book (grids.qmd), conversations with Ryan Abernathey | Ch 3 or Ch 4 | ~800 | DRAFT | A–H classification of grid referencing modes; xarray vs GDAL worldview |
 | frag-ch04-ghrsst-float32.md | rw-book (ghrsst-netcdf.qmd) | Ch 3 or Ch 4 | ~700 | DRAFT | GHRSST broken grid, Float32 precision trap, VRT one-liner fix |
@@ -35,7 +35,12 @@ Example: `frag-ch08-geometry-is-tables.md`
 | frag-ch03-gis-origin-story.md | silicate proto-book (sc-book: 01-intro.Rmd, 02-limitations.Rmd) | Ch 3: What does GDAL do? (or intro) | ~600 | DRAFT | Arc-node→path compromise, ArcView/shapefile, sf limitations (three structural), topology built-and-discarded pattern |
 | frag-ch02-crs-practical-problem.md | antequated.org (polar-maps-now 2017, map-projections 2023, SOmap 2019) | Ch 2: What is a CRS? | ~1100 | DRAFT | Four ingredients, three tool types (reproject/reproject/warp), projection families vs parameters, real-world Antarctic projection catalog, chicken-egg of extent/projection, Tissot link |
 | frag-ch02-crs-opening-draft.md | brainstorm session 2026-02-11 | Ch 2: What is a CRS? (chapter opening) | ~2500 | RAW DRAFT | Unpacks CRS into family/centre/params/datum; developable surfaces demystified; Mercator→TM→UTM as "one family, sixty centres"; CRS is not a map (need extent too); zero-centre trick: family+centre+distance=map, dissolves chicken-egg problem; rasterization is projection into index space; warp-the-grid flips conventional wisdom; "when geometry is hard, check the coordinate system." Needs figures. |
+| frag-ch03-vrt-connection-string.md | Gemini session 2026-02 (notes/gemini-vrt-transcript-2026-02.md), rewritten 2026-10-01 | Ch 3: What does GDAL do? | ~800 | DRAFT | vrt:// connection string as the universal interface; four handles (terra, gdalraster, rasterio, osgeo.gdal); projwin_srs; GDALG JSON pipelines |
 | frag-ch02-equal-area-warp-stats.md | brainstorm session 2026-02-11 | Ch 2 (callback) / Ch 9 / Ch 12 | ~650 | RAW FRAGMENT | OISST weighted mean three ways: manual R weights, xarray weighted, warp to LAEA and plain mean — exact match. Proves warp-the-grid applies to statistics not just geometry. "The projection carries meaning." Connects Ch 2 CRS principles to Ch 4 grid taxonomy and Ch 9 extraction. |
+
+## Book build
+
+Chapters are `NN-slug.qmd` files that include fragments; see README.md for the first-edition outline and `_quarto.yml` for the build. Fragment filenames keep the original 13-chapter numbering.
 
 ## Pending sources (not yet processed)
 

@@ -1,0 +1,8 @@
+---
+title: "Same problem, different clothes"
+---
+
+{{< include frag-ch07-parallel-gdal.md >}}
+
+{{< include frag-ch11-notebook-pain.md >}}
+

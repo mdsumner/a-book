@@ -1,0 +1,8 @@
+---
+title: "What GDAL does"
+---
+
+{{< include frag-ch03-gis-origin-story.md >}}
+
+{{< include frag-ch03-vrt-connection-string.md >}}
+

@@ -1,0 +1,10 @@
+---
+title: "What is a CRS?"
+---
+
+{{< include frag-ch02-crs-opening-draft.md >}}
+
+{{< include frag-ch02-crs-practical-problem.md >}}
+
+{{< include frag-ch02-equal-area-warp-stats.md >}}
+

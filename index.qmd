@@ -1,0 +1,34 @@
+---
+title: "Preface"
+---
+
+Most spatial books teach a library. This one teaches the data.
+
+There are only a handful of ideas in spatial computing, and they wear different
+costumes in every tool, format and domain. Three threads run through every chapter
+of this book.
+
+**Projection is the universal verb.** Geographic to projected coordinates is a
+projection. Projected coordinates to grid index space is rasterization. Index
+space back to coordinates is extraction. The affine transform is the bridge
+between them. These are one operation applied at different stages of the pipeline.
+
+**Representation is the problem.** Antimeridian wrapping, polygon splitting,
+topology that is built and then discarded, cos(latitude) weights on a global mean:
+these are artefacts of the coordinate system or the data structure, not of the
+geometry. Change the representation and the problem goes away. Warp the grid.
+Normalise the vertices. Address pixels by index.
+
+**Decomposition reveals choices.** A coordinate reference system is a family, a
+centre and some parameters. A grid is six numbers. A geometry is one of five
+table forms. The standard tooling hands you an opaque bundle; the insight comes
+from pulling it apart into independent decisions you can make for your own data
+and your own question.
+
+The examples come from real datasets: OISST and GHRSST sea surface temperature,
+NSIDC sea ice, AVISO currents, CCAMLR management areas, GEBCO bathymetry, Southern
+Ocean model output. They are the datasets where the author learned these lessons,
+usually the hard way.
+
+This is a working draft. Chapters include harvested fragments more or less as they
+were written; the seams show.

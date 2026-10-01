@@ -1,0 +1,10 @@
+---
+title: "How formats encode where"
+---
+
+{{< include frag-ch04-tiepoints-formats-carry.md >}}
+
+{{< include frag-ch04-grid-taxonomy.md >}}
+
+{{< include frag-ch04-ghrsst-float32.md >}}
+

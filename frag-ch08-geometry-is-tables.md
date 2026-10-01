@@ -2,7 +2,7 @@
 
 <!-- harvested from r-gris/table-r-book, polyggon, and the spbabel/gris/silicate lineage -->
 <!-- target: Ch 8 "Geometry as topology" in the spatial book -->
-<!-- status: first draft fragment, needs integration with vertex-pool material -->
+<!-- status: DRAFT; rosetta-stone and triangulation-taxonomy snippets merged in 2026-10-01 -->
 
 ## The GIS contract
 
@@ -36,6 +36,31 @@ There's a spectrum of representations for the same spatial objects. Each form ha
 
 The progression from form 1 to form 5 is a sequence of normalization steps, in the database sense. Each step makes the structure more explicit and more general, at the cost of needing joins to reassemble the original. The key transition is between forms 3 and 5: you go from "coordinates that happen to be the same" to "vertices that *are* the same, referenced by index."
 
+## Rosetta stone: the same entities under different names
+
+The same structural concepts recur across every spatial system, wearing different names. This table maps them:
+
+| Concept | PostGIS | sp | sf | ggplot2 fortify | terra::geom | GDAL | silicate | General term |
+|---------|---------|-----|-----|-----------------|-------------|------|----------|-------------|
+| A thing with attributes | feature | Spatial*DataFrame row | sf row | `id` | `object` | Feature | object | **Object** |
+| A connected piece of a thing | element | Polygons/Lines slot | ring/linestring within geometry | `piece`/`group` | `part` | Ring/subgeometry | path | **Branch** |
+| A location | point | coordinate matrix row | coordinate | `long`/`lat` | `x`/`y` | point | vertex (unique) or coord (instance) | **Vertex** |
+| A topological atom | — | — | — | — | — | — | segment (1D) / triangle (2D) | **Primitive** |
+
+Notes:
+
+- sp conflated branches and objects at the class level (Polygons vs Polygon, Lines vs Line) but didn't give branches first-class identity — you couldn't attach attributes to a ring.
+- sf improved the hole model (first ring = exterior, subsequent = holes) but kept geometry opaque via the `sfc` list-column. Branches still aren't queryable entities.
+- The **Primitive** row is empty for most systems because they don't decompose below the branch level. This is precisely the gap that silicate, anglr, and the vertex-pool approach fill.
+- GDAL's internal model aligns most closely with the PostGIS column: features contain geometries, geometries contain rings/subgeometries, rings contain points.
+
+<!-- 
+Consider: add gdalraster, wk, and geos columns? They map slightly differently:
+- wk: wk_handle() streams vertices, no named entity levels
+- geos: GEOSGeometry, GEOSCoordSequence — two levels, no branch concept
+- gdalraster: inherits GDAL model via OGR
+-->
+
 ## The step that changes everything
 
 To get from branches to primitives, you do two things:
@@ -49,6 +74,28 @@ Once you have a PSLG, new structures become available that nested lists can neve
 This is exactly what rgl has always done. Every rgl rendering primitive — triangles, quads, line segments — is defined as indices into a coordinate array. The coordinates don't have to be unique, but they *can* be, and when they are, you have a true mesh. Rgl includes ear-clipping triangulation to convert polygons into triangle surfaces, and those surfaces can wrap around in ways that GIS polygons never could.
 
 The realization that these are the same idea — the database normalization of spatial geometry and the indexed vertex pool of GPU renderers — was the seed of the silicate package.
+
+## Three kinds of triangulation
+
+Once you have a vertex pool and a set of edges (a PSLG), you can triangulate — but the choice of algorithm determines what you get.
+
+**Delaunay triangulation** satisfies the "empty circumcircle" condition: no vertex falls inside the circumscribed circle of any triangle. This maximizes the minimum angle across all triangles, producing well-shaped elements. It's the right choice for interpolation and surface fitting, because well-shaped triangles give stable numerical results. But it ignores your input edges — polygon boundaries may be crossed by Delaunay edges, which means the triangulation doesn't respect the shapes you started with.
+
+**Constrained Delaunay triangulation** keeps all your input edges intact while being "as Delaunay as possible" everywhere else. You can also impose constraints on minimum triangle area and minimum interior angle, forcing the triangulator to add Steiner points (new vertices) to meet quality targets. This is what you want for meshing polygons: boundaries are preserved, interior density is controllable, and the resulting triangles are well-shaped enough for rendering and computation. In R, RTriangle wraps Shewchuk's Triangle library for this. In Python, triangle and meshpy provide similar access.
+
+**Ear-clipping** is the fast, simple alternative. Walk the polygon boundary, find "ears" (triangles formed by three consecutive vertices where no other vertex falls inside), clip them off, repeat. It's O(n²), always preserves input edges, handles non-convex polygons, and needs no external library — rgl includes one. But it produces no interior vertices and makes no quality guarantees. The resulting triangles can be arbitrarily thin or oddly shaped. It's fine for rendering flat polygons (where triangle quality doesn't matter for visual appearance) but poor for surface fitting or finite-element work.
+
+The choice cascades from the application: ear-clipping for quick visualization, constrained Delaunay for meshing and draping, unconstrained Delaunay for interpolation from scattered points.
+
+<!--
+R packages: RTriangle (constrained Delaunay), rgl (ear-clipping built in), 
+deldir (Delaunay + Voronoi), interp (Delaunay), geometry (n-dimensional via Qhull).
+Python: scipy.spatial.Delaunay (unconstrained), triangle (constrained), 
+meshpy (constrained, Shewchuk), mapbox_earcut (ear-clipping).
+
+The decido package provides ear-clipping for R via the mapbox earcut algorithm,
+faster than rgl's built-in for large polygons.
+-->
 
 ## What the tables buy you
 

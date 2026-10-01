@@ -1,0 +1,8 @@
+---
+title: "Geometry as topology"
+---
+
+{{< include frag-ch08-geometry-is-tables.md >}}
+
+{{< include frag-ch08-3d-globe-story.md >}}
+

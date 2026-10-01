@@ -1,0 +1,8 @@
+---
+title: "What is a grid?"
+---
+
+{{< include frag-ch01-six-numbers.md >}}
+
+{{< include frag-ch01-centre-vs-edge.md >}}
+

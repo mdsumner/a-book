@@ -1,0 +1,42 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "Spatial data, underneath"
+  subtitle: "Grids, coordinate systems, GDAL and geometry from R and Python"
+  author: "Michael Sumner"
+  date: today
+  repo-url: https://github.com/mdsumner/a-book
+  repo-actions: [edit, issue]
+  chapters:
+    - index.qmd
+    - part: "Where"
+      chapters:
+        - 01-grids.qmd
+        - 02-crs.qmd
+        - 03-formats.qmd
+    - part: "The engine"
+      chapters:
+        - 04-gdal.qmd
+        - 05-same-problem.qmd
+    - part: "Shape"
+      chapters:
+        - 06-geometry.qmd
+        - 07-extraction.qmd
+    - part: "Ecosystem"
+      chapters:
+        - 08-installation.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    shift-heading-level-by: 1
+    code-copy: true
+
+execute:
+  eval: false
+  freeze: auto

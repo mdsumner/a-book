@@ -1,2 +1,5 @@
 .Rproj.user
 *.html
+/_book/
+/.quarto/
+/_freeze/
