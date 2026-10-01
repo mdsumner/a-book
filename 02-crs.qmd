@@ -8,3 +8,5 @@ title: "What is a CRS?"
 
 {{< include frag-ch02-equal-area-warp-stats.md >}}
 
+{{< include frag-ch02-longlat-thinking.md >}}
+
