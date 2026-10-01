@@ -6,3 +6,5 @@ title: "Geometry as topology"
 
 {{< include frag-ch08-3d-globe-story.md >}}
 
+{{< include frag-ch08-arrays-are-tables-too.md >}}
+
