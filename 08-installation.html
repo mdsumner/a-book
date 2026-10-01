@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; The installation problem – Spatial data, underneath</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./07-extraction.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e3a0307bf87dea633ae254d873c6233f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-installation.html">Ecosystem</a></li><li class="breadcrumb-item"><a href="./08-installation.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The installation problem</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Spatial data, underneath</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mdsumner/a-book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Preface</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Where</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-grids.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What is a grid?</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is a CRS?</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How formats encode where</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The engine</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-gdal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">What GDAL does</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-same-problem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Same problem, different clothes</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Shape</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Geometry as topology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-extraction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extraction and rasterization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Ecosystem</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-installation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The installation problem</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-wheel-problem" id="toc-the-wheel-problem" class="nav-link active" data-scroll-target="#the-wheel-problem"><span class="header-section-number">10</span> The wheel problem</a>
+  <ul class="collapse">
+  <li><a href="#why-pip-install-gdal-doesnt-work" id="toc-why-pip-install-gdal-doesnt-work" class="nav-link" data-scroll-target="#why-pip-install-gdal-doesnt-work"><span class="header-section-number">10.1</span> Why <code>pip install GDAL</code> doesn’t work</a></li>
+  <li><a href="#why-r-doesnt-have-this-problem" id="toc-why-r-doesnt-have-this-problem" class="nav-link" data-scroll-target="#why-r-doesnt-have-this-problem"><span class="header-section-number">10.2</span> Why R doesn’t have this problem</a></li>
+  <li><a href="#social-barriers-vs-technical-barriers" id="toc-social-barriers-vs-technical-barriers" class="nav-link" data-scroll-target="#social-barriers-vs-technical-barriers"><span class="header-section-number">10.3</span> Social barriers vs technical barriers</a></li>
+  <li><a href="#the-practical-landscape-2026" id="toc-the-practical-landscape-2026" class="nav-link" data-scroll-target="#the-practical-landscape-2026"><span class="header-section-number">10.4</span> The practical landscape (2026)</a></li>
+  <li><a href="#what-this-tells-us-about-ecosystem-design" id="toc-what-this-tells-us-about-ecosystem-design" class="nav-link" data-scroll-target="#what-this-tells-us-about-ecosystem-design"><span class="header-section-number">10.5</span> What this tells us about ecosystem design</a></li>
+  </ul></li>
+  <li><a href="#six-string-types-and-four-ownership-models" id="toc-six-string-types-and-four-ownership-models" class="nav-link" data-scroll-target="#six-string-types-and-four-ownership-models"><span class="header-section-number">11</span> Six string types and four ownership models</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/08-installation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08-installation.html">Ecosystem</a></li><li class="breadcrumb-item"><a href="./08-installation.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The installation problem</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The installation problem</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-wheel-problem" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="the-wheel-problem"><span class="header-section-number">10</span> The wheel problem</h2>
+<!-- harvested from mdsumner/gdal-r-python installation/gdal-python-binaries.md -->
+<!-- target: Ch 11 (The installation problem) -->
+<!-- status: DRAFT -->
+<section id="why-pip-install-gdal-doesnt-work" class="level3" data-number="10.1">
+<h3 data-number="10.1" class="anchored" data-anchor-id="why-pip-install-gdal-doesnt-work"><span class="header-section-number">10.1</span> Why <code>pip install GDAL</code> doesn’t work</h3>
+<p>The <code>GDAL</code> package on PyPI ships only source distributions. Installing it requires a pre-installed GDAL C library with matching development headers, plus a compiler toolchain. This makes it one of the most common pain points in the Python geospatial ecosystem — and the reasons it remains unsolved are structural, not just engineering laziness.</p>
+<p>Rasterio, fiona, and pyogrio ship binary wheels that vendor their own copy of <code>libgdal</code> and its dependencies inside each wheel. This works because each package loads its own private copy of the library. The GDAL bindings can’t do this, because if <code>pip install GDAL</code> delivered a wheel containing <code>libgdal.so</code>, and the user also had rasterio installed with its own <code>libgdal.so</code>, both copies would be loaded into the same Python process. The result is crashes or silent state corruption, depending on import order.</p>
+<p>The problem is worse than just one duplicated library. The GDAL Python bindings consist of several separate extension modules (<code>osgeo.gdal</code>, <code>osgeo.ogr</code>, <code>osgeo.osr</code>, <code>osgeo.gdal_array</code>) that all need to link against the same <code>libgdal</code> instance and share global state — driver registration, error handlers, configuration options. If these were statically linked into separate <code>.so</code> files, each would get its own copy of GDAL’s global state, which would be incorrect.</p>
+<p>Even Rouault outlined two possible solutions: a single monolithic extension module (significant SWIG refactoring), or a dynamically linked <code>libgdal.so</code> with all public symbols renamed to avoid collision — “quite an adventure.”</p>
+</section>
+<section id="why-r-doesnt-have-this-problem" class="level3" data-number="10.2">
+<h3 data-number="10.2" class="anchored" data-anchor-id="why-r-doesnt-have-this-problem"><span class="header-section-number">10.2</span> Why R doesn’t have this problem</h3>
+<p>The contrast with R is instructive and highlights how packaging model design choices cascade into ecosystem-wide consequences.</p>
+<p>CRAN builds binaries centrally. When sf or terra is submitted, CRAN’s build machines compile it against a known GDAL installation that CRAN maintains. On Windows this is Rtools with bundled libraries; on macOS it’s the CRAN recipes infrastructure. Every R package that needs GDAL links against the same copy. There is no symbol collision because there is one <code>libgdal</code>, shared across sf, terra, vapour, gdalraster, and any other package.</p>
+<p>R’s linking model supports shared native dependencies. Multiple packages share a single dynamic <code>libgdal</code>. In Python, each wheel is a self-contained unit — pip has no concept of a shared native library dependency that multiple packages can link against at runtime. The Rtools toolchain bundles a curated C/C++ library stack that any R package can link against — functionally equivalent to what conda-forge provides for Python, but integrated into CRAN’s official distribution workflow. There is no PyPI equivalent.</p>
+<p>Python’s philosophy of “every wheel ships everything it needs” works well for simple packages but creates duplication and collision problems for the geospatial stack, where multiple packages all require the same complex C library.</p>
+</section>
+<section id="social-barriers-vs-technical-barriers" class="level3" data-number="10.3">
+<h3 data-number="10.3" class="anchored" data-anchor-id="social-barriers-vs-technical-barriers"><span class="header-section-number">10.3</span> Social barriers vs technical barriers</h3>
+<p>Both ecosystems have a dominant high-level package — sf in R, rasterio in Python — and in both cases the popularity of that package shapes how users think about GDAL access. But the nature of the constraint is fundamentally different.</p>
+<p>In R, the barrier is social and psychological. When a new package like vapour or gdalraster appears and works directly with the GDAL C API, the community response is “how does this relate to sf?” — as though sf were the gatekeeping layer through which all GDAL work must pass. But this is a perception, not a technical reality. Because every R package links against the same shared <code>libgdal</code>, you can <code>library(sf)</code> and <code>library(gdalraster)</code> in the same session without conflict. New packages that expose different parts of GDAL coexist freely.</p>
+<p>In Python, rasterio’s dominance has created a technical barrier rather than merely a social one. If a user’s environment is built around rasterio’s PyPI wheels, adding <code>osgeo.gdal</code> risks crashes from duplicate <code>libgdal</code> symbols. The ecosystem has organised around rasterio’s subset of GDAL not only by preference but because the wheel architecture forces a choice: use rasterio’s vendored GDAL, or use the GDAL bindings, but combining both via pip requires conda-forge or a co-built wheel set.</p>
+<p>This means that parts of GDAL not exposed by rasterio — the multidimensional API for NetCDF/HDF5/Zarr, advanced VRT operations, the full <code>gdal.Warp</code> option space — are not merely overlooked. They are structurally harder to access for users whose environments are built on PyPI wheels. The packaging architecture has, as an emergent consequence, narrowed the effective surface area of GDAL available to the average Python user.</p>
+</section>
+<section id="the-practical-landscape-2026" class="level3" data-number="10.4">
+<h3 data-number="10.4" class="anchored" data-anchor-id="the-practical-landscape-2026"><span class="header-section-number">10.4</span> The practical landscape (2026)</h3>
+<p>Three options exist for binary GDAL Python installation:</p>
+<p><strong>Christoph Gohlke’s geospatial-wheels</strong> (Windows only): co-built wheels for GDAL, rasterio, fiona, pyogrio, and others, all linked against the same library versions. The one pip-based environment where <code>import osgeo.gdal</code> and <code>import rasterio</code> safely coexist, because they share underlying libraries. Maintained by one individual.</p>
+<p><strong>Petr Tsymbarovich’s gdal-wheels</strong> (Linux + Windows): uses cibuildwheel and vcpkg. Published to a GitLab PyPI registry. Cannot safely coexist with rasterio PyPI wheels — the symbol collision problem applies in full. Also maintained by one individual.</p>
+<p><strong>conda-forge</strong> (all platforms): packages <code>libgdal</code> as a shared library that all geospatial packages link against. This most closely mirrors R/CRAN’s model and is the only approach that fully solves co-installability. The tradeoff is operating in conda’s packaging ecosystem rather than pip’s, and the risk that <code>pip install rasterio</code> inside a conda env reintroduces the duplication problem.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Gohlke wheels</th>
+<th>gdal-wheels</th>
+<th>conda-forge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Platforms</td>
+<td>Windows</td>
+<td>Linux + Windows</td>
+<td>All</td>
+</tr>
+<tr class="even">
+<td>Safe with rasterio</td>
+<td>Yes (co-built)</td>
+<td>No</td>
+<td>Yes (shared libgdal)</td>
+</tr>
+<tr class="odd">
+<td>pip compatible</td>
+<td>Yes (custom index)</td>
+<td>Yes (GitLab index)</td>
+<td>No (conda/pixi)</td>
+</tr>
+<tr class="even">
+<td>Governance</td>
+<td>Individual</td>
+<td>Individual</td>
+<td>Community</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="what-this-tells-us-about-ecosystem-design" class="level3" data-number="10.5">
+<h3 data-number="10.5" class="anchored" data-anchor-id="what-this-tells-us-about-ecosystem-design"><span class="header-section-number">10.5</span> What this tells us about ecosystem design</h3>
+<p>The GDAL wheel problem is a case study in how packaging architecture shapes what’s possible. R’s centralised build model — one shared library, CRAN compiles everything — eliminated the problem before it existed. Python’s decentralised wheel model — each package ships its own dependencies — created a structural constraint that no amount of engineering effort has fully resolved.</p>
+<p>The lesson isn’t that one model is better. It’s that the choice reverberates: R packages can freely expose different views of the same underlying library, while Python packages are pressured to be self-contained kingdoms. For a library as large and interconnected as GDAL, the kingdom model creates borders where none should exist.</p>
+<!--
+## Notes (not for publication)
+
+The full gdal-python-binaries.md has detailed installation commands for 
+each option (pip, uv, conda, pixi), version-specific configuration for 
+pyproject.toml, and links to the relevant gdal-dev mailing list threads.
+Keep as reference material alongside this fragment.
+
+The osgeo namespace discovery issue (tab completion doesn't work because 
+SWIG doesn't wire up __all__ or lazy imports) is a nice detail for a 
+sidebar but was cut from this fragment.
+
+GDAL's multidimensional API (MDArray, Dimension, Group) being accessible 
+ONLY through osgeo.gdal — not through rasterio, fiona, or pyogrio — is 
+the key example of how the packaging constraint narrows GDAL's effective 
+surface area. This connects to Ch 10 (Zarr, multidimensional data).
+-->
+</section>
+</section>
+<section id="six-string-types-and-four-ownership-models" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="six-string-types-and-four-ownership-models"><span class="header-section-number">11</span> Six string types and four ownership models</h2>
+<!-- harvested from mdsumner/gdal-r-python cpp-strings-r-gdal.md -->
+<!-- target: Appendix or Ch 11 sidebar -->
+<!-- status: SNIPPET — full reference in cpp-strings-r-gdal.md -->
+<p>Writing R packages that wrap GDAL means working at the intersection of four memory management philosophies: C (a string is an address, ownership by loose agreement), C++ standard library (a string is a value type, RAII cleanup), R’s C API (strings are garbage-collected, interned, immutable), and GDAL (C strings with its own allocation conventions — CSL lists, internal buffers, caller-owns vs callee-owns).</p>
+<p>The six types you encounter are: <code>const char*</code> (raw C string — who owns this and when does it die?), <code>std::string</code> (C++ owned, the safe harbour for boundary crossings), <code>char**</code>/CSL (GDAL string lists — null-terminated array of null-terminated strings, the hand-rolled <code>std::vector&lt;std::string&gt;</code> from the C era), <code>STRSXP</code>/<code>CHARSXP</code> (R’s interned immutable string pool), <code>Rcpp::CharacterVector</code> (convenient but indexing returns a proxy, not a string), and <code>cpp11::strings</code>/<code>cpp11::writable::strings</code> (read-only vs writable distinction explicit at the type level).</p>
+<p>The practical core is the conversion matrix: almost everything copies. The only free conversions are views via <code>.c_str()</code> or <code>CHAR()</code>, both with lifetime constraints. Going into R always copies and interns. <code>std::vector&lt;std::string&gt;</code> is the safest staging container when shuffling many strings between systems.</p>
+<p>The ownership traps are predictable but lethal. Dangling <code>.c_str()</code> from a temporary <code>std::string</code>. Holding GDAL internal pointers past the next API call. Forgetting <code>CSLDestroy()</code> on a list you built. Calling <code>CSLDestroy()</code> on <code>GDALGetMetadata()</code>’s internal storage. The mental model: every <code>const char*</code> is a question about who owns the memory and when it dies. Answer that before you use it.</p>
+<p>The CLI-style argument tokenisation trap also catches everyone at least once: GDAL utility wrappers (<code>GDALWarp</code>, <code>GDALTranslate</code>) take <code>char**</code> as pre-tokenised argv-style arrays, not command-line strings that get shell-parsed. <code>"-ts 1024 0"</code> as one string won’t work; it needs to be three separate elements <code>"-ts"</code>, <code>"1024"</code>, <code>"0"</code>. In R this is natural (character vectors are already tokenised), but the confusion comes from thinking of these as command lines rather than argument arrays.</p>
+<p>On the Python side, the memory/lifetime problems disappear (GC handles it), but a different confusion emerges: there are five ways to pass options to GDAL (string lists, keyword arguments, options objects, dicts, JSON strings), and they don’t always compose or interchange cleanly. When in doubt, use the string list form — it maps 1:1 to the C API and works everywhere.</p>
+<!--
+## Notes (not for publication)
+
+The full cpp-strings-r-gdal.md has the complete conversion matrix table, 
+all five common patterns for GDAL wrappers (reading metadata, passing open 
+options, std::vector staging area, config option RAII guard, CLI argument 
+tokenisation), and all five ownership traps with code examples.
+
+The CSLConstList migration in GDAL 3.x (from char** to const char* const*) 
+is part of a wider const-correctness push that makes ownership clearer at 
+the type level — worth mentioning when discussing GDAL's evolution.
+
+cpp11's read-only vs writable distinction is a genuine improvement over Rcpp 
+for clarity when wrapping GDAL functions. The book should recommend cpp11 
+over Rcpp for new GDAL wrapper packages.
+-->
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./07-extraction.html" class="pagination-link" aria-label="Extraction and rasterization">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extraction and rasterization</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/08-installation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

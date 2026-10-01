@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; What is a CRS? – Spatial data, underneath</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03-formats.html" rel="next">
+<link href="./01-grids.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e3a0307bf87dea633ae254d873c6233f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-grids.html">Where</a></li><li class="breadcrumb-item"><a href="./02-crs.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is a CRS?</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Spatial data, underneath</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mdsumner/a-book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Preface</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Where</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-grids.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What is a grid?</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-crs.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is a CRS?</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How formats encode where</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The engine</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-gdal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">What GDAL does</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-same-problem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Same problem, different clothes</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Shape</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Geometry as topology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-extraction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extraction and rasterization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Ecosystem</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The installation problem</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#what-is-a-crs" id="toc-what-is-a-crs" class="nav-link active" data-scroll-target="#what-is-a-crs"><span class="header-section-number">4</span> What is a CRS?</a>
+  <ul class="collapse">
+  <li><a href="#family" id="toc-family" class="nav-link" data-scroll-target="#family"><span class="header-section-number">4.1</span> Family</a></li>
+  <li><a href="#centre" id="toc-centre" class="nav-link" data-scroll-target="#centre"><span class="header-section-number">4.2</span> Centre</a></li>
+  <li><a href="#other-parameters" id="toc-other-parameters" class="nav-link" data-scroll-target="#other-parameters"><span class="header-section-number">4.3</span> Other parameters</a></li>
+  <li><a href="#a-crs-is-not-a-map" id="toc-a-crs-is-not-a-map" class="nav-link" data-scroll-target="#a-crs-is-not-a-map"><span class="header-section-number">4.4</span> A CRS is not a map</a></li>
+  <li><a href="#make-a-map" id="toc-make-a-map" class="nav-link" data-scroll-target="#make-a-map"><span class="header-section-number">4.5</span> Make a map</a></li>
+  <li><a href="#rasterization-is-projection" id="toc-rasterization-is-projection" class="nav-link" data-scroll-target="#rasterization-is-projection"><span class="header-section-number">4.6</span> Rasterization is projection</a></li>
+  <li><a href="#sometimes-warp-the-grid" id="toc-sometimes-warp-the-grid" class="nav-link" data-scroll-target="#sometimes-warp-the-grid"><span class="header-section-number">4.7</span> Sometimes, warp the grid</a></li>
+  </ul></li>
+  <li><a href="#crs-is-a-practical-problem-not-a-theoretical-one" id="toc-crs-is-a-practical-problem-not-a-theoretical-one" class="nav-link" data-scroll-target="#crs-is-a-practical-problem-not-a-theoretical-one"><span class="header-section-number">5</span> CRS is a practical problem, not a theoretical one</a>
+  <ul class="collapse">
+  <li><a href="#four-things-you-need" id="toc-four-things-you-need" class="nav-link" data-scroll-target="#four-things-you-need"><span class="header-section-number">5.1</span> Four things you need</a></li>
+  <li><a href="#three-types-of-projection-tools" id="toc-three-types-of-projection-tools" class="nav-link" data-scroll-target="#three-types-of-projection-tools"><span class="header-section-number">5.2</span> Three types of projection tools</a></li>
+  <li><a href="#projection-families-and-parameters" id="toc-projection-families-and-parameters" class="nav-link" data-scroll-target="#projection-families-and-parameters"><span class="header-section-number">5.3</span> Projection families and parameters</a></li>
+  <li><a href="#projections-in-the-wild" id="toc-projections-in-the-wild" class="nav-link" data-scroll-target="#projections-in-the-wild"><span class="header-section-number">5.4</span> Projections in the wild</a></li>
+  <li><a href="#the-chicken-and-egg-of-extent-and-projection" id="toc-the-chicken-and-egg-of-extent-and-projection" class="nav-link" data-scroll-target="#the-chicken-and-egg-of-extent-and-projection"><span class="header-section-number">5.5</span> The chicken-and-egg of extent and projection</a></li>
+  </ul></li>
+  <li><a href="#equal-area-warp-as-weighted-mean" id="toc-equal-area-warp-as-weighted-mean" class="nav-link" data-scroll-target="#equal-area-warp-as-weighted-mean"><span class="header-section-number">6</span> Equal-area warp as weighted mean</a>
+  <ul class="collapse">
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link" data-scroll-target="#the-problem"><span class="header-section-number">6.1</span> The problem</a></li>
+  <li><a href="#three-approaches" id="toc-three-approaches" class="nav-link" data-scroll-target="#three-approaches"><span class="header-section-number">6.2</span> Three approaches</a></li>
+  <li><a href="#why-it-works" id="toc-why-it-works" class="nav-link" data-scroll-target="#why-it-works"><span class="header-section-number">6.3</span> Why it works</a></li>
+  <li><a href="#what-this-demonstrates" id="toc-what-this-demonstrates" class="nav-link" data-scroll-target="#what-this-demonstrates"><span class="header-section-number">6.4</span> What this demonstrates</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/02-crs.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-grids.html">Where</a></li><li class="breadcrumb-item"><a href="./02-crs.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is a CRS?</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is a CRS?</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="what-is-a-crs" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="what-is-a-crs"><span class="header-section-number">4</span> What is a CRS?</h2>
+<!-- draft chapter opening, brainstormed 2026-02-11 -->
+<!-- status: RAW DRAFT — voice capture, needs tightening and figures -->
+<p>Every “map projection” is not just one thing. It’s a coordinate reference system — a CRS — and every CRS is composed of parts: a family, a datum, a centre, and other parameters. Too often we equate “a map projection” to a short code like <code>EPSG:3031</code> or to a particular parameterized variant like “Polar Stereographic.” That collapses several independent choices into one opaque label, and it makes projections seem like magic incantations rather than decisions you can reason about.</p>
+<p>Let’s unpack this.</p>
+<section id="family" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="family"><span class="header-section-number">4.1</span> Family</h3>
+<p>The family is the overall kind of projection. It determines the <em>nature</em> of the compromise — what geometric properties are preserved, what’s sacrificed, and in what pattern across the map. A family is a name: Lambert Azimuthal Equal Area, Mercator, Albers Conic, Stereographic, Gnomonic. Each name corresponds to a <code>+proj=</code> code: <code>laea</code>, <code>merc</code>, <code>aea</code>, <code>stere</code>, <code>gnom</code>.</p>
+<!-- [TABLE or FIGURE: show 4–6 families side by side, same data, same centre, 
+     to show what "family" means visually — the *kind* of distortion pattern] -->
+<p>Families capture relative properties. A conformal family (Mercator, Stereographic) preserves local angles and shapes at the cost of area. An equal-area family (Lambert Azimuthal, Albers) preserves area at the cost of shape. An equidistant family preserves distance along one axis or from one point. No family can do all three — that’s the fundamental compromise, and the family is where you make it.</p>
+<p>You’ve seen the guides that explain this. They show a light source, a globe, and a geometric object — a plane, a cone, a cylinder — wrapped around or touching the globe. These are the <em>developable surfaces</em>, and every projection family is built from one of them. The plane gives you azimuthal projections (Stereographic, Lambert Azimuthal, Gnomonic). The cone gives you conic projections (Albers, Lambert Conformal Conic). The cylinder gives you cylindrical projections (Mercator, Equal Area Cylindrical, Plate Carrée).</p>
+<!-- [FIGURE: the classic three developable surfaces — but annotated with 
+     "this tells you the family, not the map"] -->
+<p>These guides tell a nice story, and then you’re scratching your head about how to actually understand what a map projection <em>is</em>, what it’s <em>for</em>, and most importantly how to <em>do it</em>. Because the developable surface tells you the family of mathematics involved, but it doesn’t tell you where the cone sits, or which way the cylinder is oriented, or what part of the Earth the plane is tangent to. For that you need the rest of the CRS.</p>
+</section>
+<section id="centre" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="centre"><span class="header-section-number">4.2</span> Centre</h3>
+<p>When you actually use a projection, the centre dictates where the middle of the map falls on the Earth. It’s the point of least distortion — the place where the developable surface touches or intersects the globe. Move the centre and you move the sweet spot.</p>
+<p>In PROJ notation this is <code>+lat_0</code> and <code>+lon_0</code>. For a south polar map, <code>+lat_0=-90</code>. For a map centred on Hobart, <code>+lat_0=-42.88 +lon_0=147.33</code>. Same family, completely different map.</p>
+<!-- [FIGURE: same family (laea), three different centres — polar, mid-latitude, 
+     equatorial — showing how the distortion pattern rotates with the centre] -->
+<p>You might think Mercator and longitude-latitude don’t have parameterizable centres. They absolutely do. Standard Mercator has <code>+lon_0=0</code> by convention, but change it and the map recentres — the antimeridian moves, the seam shifts. More dramatically: rotate Mercator 90 degrees and the equator becomes the central <em>meridian</em> instead of the central parallel. That’s Transverse Mercator — and UTM is just Transverse Mercator applied in 60 six-degree strips, each with its own <code>+lon_0</code>. The Universal Transverse Mercator system is not a single projection. It’s one family, sixty centres.</p>
+<p>Similarly, longitude-latitude (<code>+proj=longlat</code>) has a default centre at (0, 0) — the intersection of the equator and the prime meridian. But Oblique Transverse (<code>+proj=omerc</code>), Cassini-Soldner (<code>+proj=cass</code>), and Transverse Mercator (<code>+proj=tmerc</code>) are all the same family of cylinder-on-the-globe, just oriented differently. The family is cylindrical; the centre and orientation are what make each one a different CRS.</p>
+<!-- [FIGURE: Mercator → Transverse Mercator → Oblique Mercator, 
+     showing the cylinder rotating around the globe] -->
+</section>
+<section id="other-parameters" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="other-parameters"><span class="header-section-number">4.3</span> Other parameters</h3>
+<p>Beyond family and centre, a CRS has parameters that control the specific geometry of the projection surface and various practical offsets:</p>
+<p><strong>Latitude of true scale</strong> (<code>+lat_ts</code>): for Stereographic and some cylindrical projections, this is where scale is exactly 1:1. NSIDC’s south polar stereographic uses <code>+lat_ts=-70</code> — scale is perfect at 70°S, distorted elsewhere.</p>
+<p><strong>Standard parallels</strong> (<code>+lat_1</code>, <code>+lat_2</code>): for conic projections, these are the two latitudes where the cone intersects the globe. Between them, distortion is minimised. A Lambert Conformal Conic for Tasmania might use <code>+lat_1=-50 +lat_2=-35</code> — the cone cuts through the region of interest.</p>
+<p><strong>False easting and northing</strong> (<code>+x_0</code>, <code>+y_0</code>): arbitrary offsets to avoid negative coordinates. Pure convenience — they shift the map in the plane without changing anything about the projection geometry.</p>
+<p><strong>Datum and ellipsoid</strong> (<code>+datum</code>, <code>+ellps</code>): the shape of the Earth model. WGS84 is the most common, but older datasets use Clarke 1866, GRS80, or the Hughes 1980 ellipsoid (used by NSIDC for northern hemisphere sea ice). The datum affects where coordinates land on the ground — change the datum and the same lon-lat pair points to a different physical location, potentially by hundreds of metres.</p>
+</section>
+<section id="a-crs-is-not-a-map" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="a-crs-is-not-a-map"><span class="header-section-number">4.4</span> A CRS is not a map</h3>
+<p>Here’s the thing that’s easy to miss: a CRS — even a fully parameterized one with family, centre, datum, and all the rest — is not a map. A CRS defines how the curved Earth maps to a flat plane. It says nothing about <em>which part</em> of that plane you’re looking at.</p>
+<p>For a map, you also need a bounding box: the spatial extent in the projected coordinate system. The CRS tells you the rules of the transformation; the extent tells you the window. Two maps can use the exact same CRS and show completely different parts of the world, at completely different scales.</p>
+<p>This is why “what projection should I use?” is only half the question. The other half is “what extent do I need?” — and as we’ll see, those two questions are coupled. The extent that looks right in one projection looks wrong in another, because the distortion pattern changes.</p>
+</section>
+<section id="make-a-map" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="make-a-map"><span class="header-section-number">4.5</span> Make a map</h3>
+<p>So here are the actual decisions, in order:</p>
+<ol type="1">
+<li><p><strong>Choose a family.</strong> What property matters most — area, shape, or distance? That picks your compromise.</p></li>
+<li><p><strong>Set the centre.</strong> Where is your region of interest? Put the centre there. The sweet spot of the projection sits on your data.</p></li>
+<li><p><strong>Set the parameters.</strong> Standard parallels for conics, latitude of true scale for stereographic, datum for everything. These tune the projection to your specific region.</p></li>
+<li><p><strong>Set the extent.</strong> How much of the projected plane do you want to see? This is your map window.</p></li>
+</ol>
+<p>And here’s the trick that makes this practical rather than theoretical: when you set the centre of a projection to your point of interest, the centre <em>becomes</em> (0, 0) in the projected coordinate system. Everything flows from that. Your extent is just a distance — a symmetric box around the origin:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## choose a family and a centre</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>crs <span class="ot">&lt;-</span> <span class="st">"+proj=laea +lat_0=-42.88 +lon_0=147.33 +datum=WGS84"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="do">## choose a distance (metres)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>distance <span class="ot">&lt;-</span> <span class="dv">500000</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">## that's a map</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>extent <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>) <span class="sc">*</span> distance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Three decisions: family, centre, distance. No hunting for bounding-box coordinates in an unfamiliar projection. No chicken-and-egg problem where you need an extent to choose a CRS but need the CRS to express the extent. You defined the CRS so that (0, 0) is your point of interest, so the extent is trivially a radius around the origin.</p>
+<!-- [FIGURE: same centre (Hobart), same distance (500km), three families — 
+     laea, stere, merc — showing that family/centre/distance is the 
+     complete specification of a map. The extent is the same three numbers
+     in each case; only the distortion pattern changes.] -->
+<p>This works cleanly for azimuthal families (stereographic, Lambert azimuthal, gnomonic) where the centre maps directly to the origin. For cylindrical projections like Mercator the same idea applies but the symmetry shifts — standard Mercator’s <code>+lon_0</code> recentres the map east-west while the equator stays at y = 0, and Transverse Mercator flips that axis. For conic projections you have two standard parallels and the origin sits between them. The principle is the same — you’re choosing where (0, 0) goes — but the shape of the “sweet spot” around the origin varies with the family, which is exactly what the family is <em>for</em>.</p>
+<p>When someone says “use EPSG:3031” they’ve made all these decisions for you (family: stereographic, centre: south pole, true scale: 71°S, datum: WGS84) — which is fine if those choices match your problem, and quietly wrong if they don’t. The point of understanding the components is that you can make each choice independently, for your data, for your question. And once you see that the centre zeroes out the coordinate system, making your own CRS is actually <em>easier</em> than looking up someone else’s.</p>
+</section>
+<section id="rasterization-is-projection" class="level3" data-number="4.6">
+<h3 data-number="4.6" class="anchored" data-anchor-id="rasterization-is-projection"><span class="header-section-number">4.6</span> Rasterization is projection</h3>
+<p>There’s a deeper way to think about what a CRS does, and it connects to something that seems unrelated: rasterizing a polygon onto a grid.</p>
+<p>When you rasterize a polygon — burn its shape into the cells of a raster — you are projecting it onto the index space of the grid. The grid has its own coordinate system: row and column numbers, with an origin, a scale (cell size), and an orientation (the affine transform from Ch 1). Rasterization takes geometry defined in geographic or projected coordinates and maps it into that index space. It <em>is</em> a coordinate transformation. The target CRS just happens to be “row, column” instead of “easting, northing.”</p>
+<p>And extraction — reading raster values at point or polygon locations — is the inverse transformation. You take coordinates in geographic space, project them into the grid’s index space, and read off the values. Rasterization and extraction are complements: one burns geometry into pixels, the other reads pixels back to geometry. They’re the same operation in opposite directions, and both are projections.</p>
+<p>This isn’t just an analogy. It has practical consequences. The reason <code>terra::extract()</code> and <code>exactextractr::exact_extract()</code> are fast is that they work in the grid’s native index space — they transform the query geometry to the grid, not the grid to the query. That’s the “reproject your vectors to the raster” rule from above, expressed as an implementation choice rather than a user instruction.</p>
+</section>
+<section id="sometimes-warp-the-grid" class="level3" data-number="4.7">
+<h3 data-number="4.7" class="anchored" data-anchor-id="sometimes-warp-the-grid"><span class="header-section-number">4.7</span> Sometimes, warp the grid</h3>
+<p>The old rule of thumb — reproject your vectors to the raster, because warping is expensive — made sense when GDAL’s warper was slow and raster data was always local. Neither is true anymore. Warping is fast, even for large rasters, and much of our data lives on remote servers where the warper can operate on tiles streamed over the network.</p>
+<p>This changes the calculus. Consider the antimeridian problem: a polygon that crosses the ±180° line in longitude-latitude. In longlat, this polygon wraps around the edge of the coordinate system. It either needs to be split into two pieces (one on each side of the antimeridian), or your software needs special-case handling for the wraparound. Libraries have varying degrees of support for this, and it’s a reliable source of bugs.</p>
+<p>But that polygon isn’t complicated. It’s only complicated <em>in longlat</em>. In a polar stereographic CRS centred on the south pole, a polygon that crosses the antimeridian is just… a polygon. No wrapping, no splitting, no special cases. The “hard” geometry problem was never about the geometry — it was about the coordinate system we chose to work in.</p>
+<p>So instead of fighting the antimeridian in longlat, warp the raster to a CRS where the polygon is well-behaved, do your extraction or rasterization there, and move on. The cost of the warp is often less than the cost of the geometry gymnastics you’d need otherwise — and the result is more correct, because you’re not relying on polygon-splitting heuristics that may or may not handle your specific case.</p>
+<p>This is a general principle: when the geometry is hard, check whether it’s hard because of the coordinate system. If it is, change the coordinate system, not the geometry. Warping used to be expensive enough that this wasn’t practical advice. Now it is.</p>
+<!-- 
+## Draft notes
+
+- This opening replaces the "four things you need" framing from frag-ch02-crs-practical-problem.md,
+  which becomes the SECOND section of Ch 2 (the "how to do it" part: three tool types, 
+  reproject vs warp, the practical workflow)
+- The projection-catalog-in-the-wild material from frag-ch02 slots in after this as 
+  "what you'll encounter" — real datasets and why they chose what they chose
+- "Rasterization is projection" connects Ch 2 to Ch 9 (extraction/rasterization complementarity)
+  and to Ch 1 (the affine transform as the grid's own CRS)
+- "Sometimes warp the grid" flips the old conventional wisdom and connects to the 
+  antimeridian/wrapping problems that come up in Ch 4 (longitude wrapping) and Ch 7
+  (the same problem in R and Python)
+- The general principle "when geometry is hard, check the coordinate system" is a 
+  thesis-level statement for the whole book
+- Tissot indicatrix is the natural next topic: "we've said projections distort — 
+  how do you measure that distortion?"
+- The chicken-and-egg of extent/projection from frag-ch02 fits at the end
+- Need figures badly. The developable-surface figure exists everywhere but the 
+  "same family, different centres" figure is rare and would be genuinely useful
+- The Mercator→Transverse Mercator→Oblique Mercator rotation sequence would be 
+  a great animated figure or triptych
+- Code should build the CRS incrementally, showing what changes at each step
+- The "rasterization is projection into index space" idea could be a figure too:
+  show the same polygon in geographic coords and in row-column coords side by side
+-->
+</section>
+</section>
+<section id="crs-is-a-practical-problem-not-a-theoretical-one" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="crs-is-a-practical-problem-not-a-theoretical-one"><span class="header-section-number">5</span> CRS is a practical problem, not a theoretical one</h2>
+<!-- harvested from antequated.org (rbind/antequated.org): polar-maps-now.Rmd (2017), map-projections.qmd (2023), get-antequated-with-somap.Rmd (2019) -->
+<!-- target: Ch 2 "What is a CRS?" -->
+<!-- status: DRAFT -->
+<section id="four-things-you-need" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="four-things-you-need"><span class="header-section-number">5.1</span> Four things you need</h3>
+<p>To make a projected map you need exactly four things: a data manipulation environment, coordinate transformation tools, a coordinate reference system specification, and data. Every complexity in this chapter is a variation on one of these four.</p>
+<p>The critical first step is knowing what coordinate system your data is already in. A dataset in longitude-latitude is not “unprojected” — it uses a specific coordinate system with specific assumptions about the ellipsoid and datum. The word “unprojected” is misleading because it implies the data has no spatial reference. It does. If your software doesn’t know what that reference is, the transformation will fail or — worse — succeed silently with wrong results.</p>
+</section>
+<section id="three-types-of-projection-tools" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="three-types-of-projection-tools"><span class="header-section-number">5.2</span> Three types of projection tools</h3>
+<p>There are three fundamentally different operations, and confusing them is a common source of bugs:</p>
+<p><strong>Reproject points</strong> from source CRS to target CRS. This is pure coordinate math — take (lon, lat) pairs, apply a transformation, get (x, y) pairs. Fast, exact (within the limits of the datum transformation), and the simplest operation.</p>
+<p><strong>Reproject vector objects.</strong> The object stores its source CRS as metadata. The operation transforms all coordinates and updates the metadata. If anything goes wrong, the process should fail completely — a half-transformed object with wrong metadata is worse than an error. This is what <code>spTransform()</code> did and what <code>sf::st_transform()</code> does.</p>
+<p><strong>Warp rasters.</strong> This is fundamentally different. You can’t just transform the corner coordinates of a raster, because the grid cells in the source CRS don’t map to grid cells in the target CRS. Warping creates a new regular grid in the target CRS and resamples values from the source — it’s interpolation, not just coordinate math. GDAL’s warper handles this, and it’s now so fast and accessible that it’s used routinely for standardizing data streams and interactive visualization.</p>
+<p>The practical rule: reproject your points and vectors <em>to the raster’s CRS</em> for extraction, not the other way around. Warping is expensive and introduces resampling artifacts. But when you need a common grid across multiple sources, warping is the right tool.</p>
+<p>There’s a wider remit of <em>regridding</em> with complex coordinate arrays (climate models, ocean models), but that’s a different conversation — some of those grids aren’t really curvilinear, and some use storage modes (tabular XYZ) that are problematic for both size and fidelity.</p>
+</section>
+<section id="projection-families-and-parameters" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="projection-families-and-parameters"><span class="header-section-number">5.3</span> Projection families and parameters</h3>
+<p>A projection specification like <code>+proj=stere +lat_0=-90 +lon_0=142 +datum=WGS84</code> has two kinds of information. The <em>family</em> (<code>+proj=stere</code>, Polar Stereographic) is the mathematical model — a particular set of compromises between area, distance, and angle. The <em>parameters</em> (central longitude, central latitude, datum, ellipsoid, latitude of true scale) orient that model relative to the Earth.</p>
+<p>There is a literal infinity of possible Polar Stereographic projections. In practice we use a handful, but the distinction matters: changing <code>lon_0</code> from 142 to 10 is a rotation of the same mathematical surface; changing <code>+proj=stere</code> to <code>+proj=laea</code> is a completely different set of trade-offs.</p>
+<p>The three fundamental compromises: <strong>equal-area</strong> (area is correct everywhere in the projection — good for density maps, sea ice extent), <strong>equidistant</strong> (distance is correct along one axis or from one point — less commonly needed), <strong>conformal</strong> (angles and local shapes are preserved — good for navigation, flow fields). No projection achieves all three.</p>
+<p>The other unsaid thing here is that a projection or a crs is not a map, for a map we also need a bounding box and that is not a trivial task (see chicken egg below) but also this can lead into some code examples that make it clear that bbox is a bit rubbery ‘Tasmania’ (mainlaind or all offshore islands), and cropping too early is its own kind of problem for data manipulation.</p>
+</section>
+<section id="projections-in-the-wild" class="level3" data-number="5.4">
+<h3 data-number="5.4" class="anchored" data-anchor-id="projections-in-the-wild"><span class="header-section-number">5.4</span> Projections in the wild</h3>
+<p>Many datasets arrive already projected, and knowing what projection they use — and why — is part of understanding the data:</p>
+<p><strong>Polar Stereographic</strong> — NSIDC sea ice products, SSMI brightness temperatures. Conformal, so ice edge shapes look right. Different hemispheres use different parameters: south pole at <code>+lat_0=-90 +lon_0=0</code>, north pole with Hughes 1980 ellipsoid at <code>+lat_0=90 +lon_0=-45</code>.</p>
+<p><strong>Lambert Azimuthal Equal Area</strong> — CCAMLR management zones, many AAD Antarctic datasets. Equal-area, so statistical summaries over regions give correct results.</p>
+<p><strong>Mercator variants</strong> — AVISO ocean currents, Smith/Sandwell bathymetry, web tile services. The old AVISO NetCDF stored currents on a Mercator grid but presented them as if they were longitude-latitude — the grid looked right when plotted naively, but the map overlay didn’t line up until you recognized it was rectilinear in lon-lat (latitude lines denser toward poles) but regular in native Mercator projection.</p>
+<p><strong>Equal Area Cylindrical</strong> — Fraser/Massom fast ice maps around Antarctica, with a custom central longitude and latitude of true scale.</p>
+<p><strong>Sinusoidal</strong> — SeaWiFS and MODIS Level 3 ocean colour. An equal-area choice that tiles the globe differently from cylindrical projections.</p>
+<p>Some complex models (like WAOM2 ROMS for the Southern Ocean) are a regular grid in a projection but are delivered with longitude-latitude coordinate arrays. The grid <em>is</em> regular — in the model’s native projection. The lon-lat arrays are a convenience that hides this fact and makes the data look curvilinear when it isn’t. Other models are truly curvilinear (no underlying regular grid), and the distinction matters for how you extract values from them.</p>
+</section>
+<section id="the-chicken-and-egg-of-extent-and-projection" class="level3" data-number="5.5">
+<h3 data-number="5.5" class="anchored" data-anchor-id="the-chicken-and-egg-of-extent-and-projection"><span class="header-section-number">5.5</span> The chicken-and-egg of extent and projection</h3>
+<p>Making a map involves circular dependencies. You choose a projection, which determines how space is distorted, which affects what extent looks reasonable, which affects the projection choice. You pick an extent, but then want more or less, which changes the projection parameters, which subtly impacts the graticule, labels, and data overlay.</p>
+<p>This back-and-forth is inherent, not a sign that your tools are broken. The more familiar you are with the component tools, the faster you iterate. SOmap automated some of this for Antarctic maps — <code>SOauto_map()</code> adapts both projection and extent to the input data — but automation only gets you a starting point. The finishing is always manual.</p>
+<p>On scale bars and north arrows: a scale bar is only accurate if you orient it where linear distance on the ground corresponds to equal spacing in the map, which is rare. A north arrow is either totally redundant (north is up, the graticule shows it) or hopelessly misleading (in a polar projection, “north” points in every direction from the pole). Exploring what’s wrong with these cartographic conventions leads directly to understanding the Tissot indicatrix — the formal measure of how a projection distorts the local geometry at every point on the map.</p>
+<!-- 
+## Source notes (not for publication)
+
+antequated.org was a blogdown site on Yihui Xie's rbind GitHub org, 
+dedicated to polar mapping techniques. Three original posts by Michael 
+(2017, 2019, 2023) plus one by Jaimie Cleeland (Southern Ocean map tutorial).
+
+The 2023 map-projections post is the most mature — it has the three-tool-types 
+taxonomy, the real-world projection catalog, and the Mercator grid gotcha.
+The 2017 post has the sharper pedagogical framing (four ingredients, 
+"unprojected" misnomer). The 2019 SOmap post demonstrates auto-projection.
+
+The Southern Ocean map tutorial (Cleeland, 2017) is a worked example using 
+sp/rgdal/raster era tools — good reference for a Ch 2 or Ch 12 worked example 
+but conceptual content is covered here.
+
+Tissot indicatrix package: https://github.com/mdsumner/tissot (now being 
+prepared for CRAN as the tissot package with tissot_raster() for computing 
+distortion metrics on regular grids in projected coordinate systems).
+
+The projection catalog (NSIDC stereo, CCAMLR LAEA, AVISO Mercator, etc.) 
+comes from direct experience at AAD working with these datasets via raadtools.
+-->
+</section>
+</section>
+<section id="equal-area-warp-as-weighted-mean" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="equal-area-warp-as-weighted-mean"><span class="header-section-number">6</span> Equal-area warp as weighted mean</h2>
+<!-- source: brainstorm session 2026-02-11 -->
+<!-- chapter: Ch 2 (callback), or Ch 9/Ch 12 (patterns) -->
+<!-- status: RAW FRAGMENT — needs code examples fleshed out -->
+<section id="the-problem" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="the-problem"><span class="header-section-number">6.1</span> The problem</h3>
+<p>Calculate the mean equatorial/subtropical/temperate sea surface temperature (SST) every day from global OISST data. OISST is a regular longlat grid — quarter-degree cells. But cells near the equator cover far more area than cells near the poles. A naive <code>mean()</code> over the raw grid over-represents high latitudes. The correct answer requires an area-weighted mean, where the weight is proportional to cos(latitude).</p>
+</section>
+<section id="three-approaches" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="three-approaches"><span class="header-section-number">6.2</span> Three approaches</h3>
+<p><strong>1. Manual weighted mean in R.</strong> Compute cos(latitude) for each cell, construct a weight matrix, multiply, sum, divide. The code isn’t complicated but it’s confusing — you’re managing array dimensions, broadcasting weights against a daily time series, making sure you’ve capped the latitude range correctly, handling NA ocean cells. Easy to get subtly wrong.</p>
+<p><strong>2. xarray weighted mean in Python.</strong> xarray has built-in support for weighted operations. You construct latitude weights with <code>np.cos(np.deg2rad(ds.lat))</code>, pass them to <code>ds.weighted()</code>, and call <code>.mean()</code>. Elegant, readable, correct. But you still need to know that longlat cells aren’t equal area, know to ask for weights, and know to use cosine of latitude specifically.</p>
+<p><strong>3. Warp to LAEA and take a plain mean.</strong> Create a Lambert Azimuthal Equal Area grid centred on null island (0°N, 0°E) with a cell size of ~25 km — roughly matching OISST’s equatorial resolution. Warp the OISST data to that grid. Take <code>mean()</code>. No weights.</p>
+<p>The result matches the weighted calculation exactly.</p>
+</section>
+<section id="why-it-works" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="why-it-works"><span class="header-section-number">6.3</span> Why it works</h3>
+<p>An equal-area projection, by definition, preserves area. Every cell in the warped grid covers the same area on the Earth’s surface. A simple unweighted mean over equal-area cells <em>is</em> an area-weighted mean — the weighting is built into the grid geometry. You didn’t compute weights; you changed the coordinate system so that weights aren’t needed.</p>
+<p>This is the same principle as the antimeridian example: when the calculation is hard, check whether it’s hard because of the coordinate system. Longlat cells are not equal area, so statistics over longlat grids require correction. Equal-area cells are equal area, so statistics are just… statistics.</p>
+</section>
+<section id="what-this-demonstrates" class="level3" data-number="6.4">
+<h3 data-number="6.4" class="anchored" data-anchor-id="what-this-demonstrates"><span class="header-section-number">6.4</span> What this demonstrates</h3>
+<ul>
+<li><strong>The projection carries meaning.</strong> Choosing LAEA isn’t just a display decision — it changes what <code>mean()</code> computes. The CRS is part of the analysis, not just the visualisation.</li>
+<li><strong>Warp-the-grid generalises.</strong> It’s not just for avoiding geometry bugs (antimeridian). It simplifies statistical operations by encoding the right geometric properties into the grid itself.</li>
+<li><strong>The “right” tool depends on what you see.</strong> The R approach requires you to understand the weighting problem and implement it. The xarray approach requires you to understand the weighting problem and use the right API. The warp approach requires you to understand that the problem <em>is</em> the coordinate system — and then the solution is trivial.</li>
+<li><strong>Connection to rasterization-as-projection.</strong> Warping the grid is rasterizing the data onto a new index space — one where the cells have the geometric property (equal area) that makes your statistic correct without adjustment.</li>
+</ul>
+<!-- 
+## Notes
+
+- The LAEA grid was centred on null island (0, 0) with extent roughly ±25000 km, 
+  matching OISST's ~25km equatorial cell size
+- Latitude range was capped (abs(lat) < some threshold) for the subtropical/temperate 
+  calculation — this is a crop in longlat before warp, or equivalently a clip in 
+  the LAEA grid after warp
+- The match was "absolutely bang on" — not approximate, not close, exact to 
+  floating point. This is because the cos(lat) weighting and the equal-area 
+  cell area are mathematically the same correction.
+- Could flesh this out with actual code showing all three approaches side by side
+- The xarray version is a good contrast: it's clean, Pythonic, correct — but it 
+  still treats the coordinate system as given and adds weights after the fact. 
+  The warp version changes the coordinate system so the weights are unnecessary.
+- This example might work best as a callback in Ch 9 or Ch 12, harking back to 
+  Ch 2's "when the math is hard, check the coordinate system" principle
+- Also connects to Ch 4 (grid taxonomy): OISST is rectilinear in longlat, 
+  the warped version is regular in LAEA — the grid taxonomy matters for 
+  what statistics you can compute naively
+-->
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01-grids.html" class="pagination-link" aria-label="What is a grid?">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What is a grid?</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03-formats.html" class="pagination-link" aria-label="How formats encode where">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How formats encode where</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/02-crs.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

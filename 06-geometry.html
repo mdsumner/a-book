@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Geometry as topology – Spatial data, underneath</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./07-extraction.html" rel="next">
+<link href="./05-same-problem.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e3a0307bf87dea633ae254d873c6233f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-geometry.html">Shape</a></li><li class="breadcrumb-item"><a href="./06-geometry.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Geometry as topology</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Spatial data, underneath</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/mdsumner/a-book" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Preface</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Where</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-grids.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">What is a grid?</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-crs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">What is a CRS?</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">How formats encode where</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">The engine</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-gdal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">What GDAL does</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-same-problem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Same problem, different clothes</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Shape</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-geometry.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Geometry as topology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-extraction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extraction and rasterization</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Ecosystem</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">The installation problem</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#geometry-is-tables-all-the-way-down" id="toc-geometry-is-tables-all-the-way-down" class="nav-link active" data-scroll-target="#geometry-is-tables-all-the-way-down"><span class="header-section-number">8</span> Geometry is tables all the way down</a>
+  <ul class="collapse">
+  <li><a href="#the-gis-contract" id="toc-the-gis-contract" class="nav-link" data-scroll-target="#the-gis-contract"><span class="header-section-number">8.1</span> The GIS contract</a></li>
+  <li><a href="#five-forms-of-the-same-data" id="toc-five-forms-of-the-same-data" class="nav-link" data-scroll-target="#five-forms-of-the-same-data"><span class="header-section-number">8.2</span> Five forms of the same data</a></li>
+  <li><a href="#rosetta-stone-the-same-entities-under-different-names" id="toc-rosetta-stone-the-same-entities-under-different-names" class="nav-link" data-scroll-target="#rosetta-stone-the-same-entities-under-different-names"><span class="header-section-number">8.3</span> Rosetta stone: the same entities under different names</a></li>
+  <li><a href="#the-step-that-changes-everything" id="toc-the-step-that-changes-everything" class="nav-link" data-scroll-target="#the-step-that-changes-everything"><span class="header-section-number">8.4</span> The step that changes everything</a></li>
+  <li><a href="#three-kinds-of-triangulation" id="toc-three-kinds-of-triangulation" class="nav-link" data-scroll-target="#three-kinds-of-triangulation"><span class="header-section-number">8.5</span> Three kinds of triangulation</a></li>
+  <li><a href="#what-the-tables-buy-you" id="toc-what-the-tables-buy-you" class="nav-link" data-scroll-target="#what-the-tables-buy-you"><span class="header-section-number">8.6</span> What the tables buy you</a></li>
+  <li><a href="#the-dream-that-partially-came-true" id="toc-the-dream-that-partially-came-true" class="nav-link" data-scroll-target="#the-dream-that-partially-came-true"><span class="header-section-number">8.7</span> The dream that partially came true</a></li>
+  </ul></li>
+  <li><a href="#the-globe-in-the-room" id="toc-the-globe-in-the-room" class="nav-link" data-scroll-target="#the-globe-in-the-room"><span class="header-section-number">9</span> The globe in the room</a>
+  <ul class="collapse">
+  <li><a href="#from-flat-polygons-to-a-3d-globe" id="toc-from-flat-polygons-to-a-3d-globe" class="nav-link" data-scroll-target="#from-flat-polygons-to-a-3d-globe"><span class="header-section-number">9.1</span> From flat polygons to a 3D globe</a></li>
+  <li><a href="#from-paths-to-meshes" id="toc-from-paths-to-meshes" class="nav-link" data-scroll-target="#from-paths-to-meshes"><span class="header-section-number">9.2</span> From paths to meshes</a></li>
+  <li><a href="#the-terrain-extension" id="toc-the-terrain-extension" class="nav-link" data-scroll-target="#the-terrain-extension"><span class="header-section-number">9.3</span> The terrain extension</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/06-geometry.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./06-geometry.html">Shape</a></li><li class="breadcrumb-item"><a href="./06-geometry.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Geometry as topology</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Geometry as topology</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="geometry-is-tables-all-the-way-down" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="geometry-is-tables-all-the-way-down"><span class="header-section-number">8</span> Geometry is tables all the way down</h2>
+<!-- harvested from r-gris/table-r-book, polyggon, and the spbabel/gris/silicate lineage -->
+<!-- target: Ch 8 "Geometry as topology" in the spatial book -->
+<!-- status: DRAFT; rosetta-stone and triangulation-taxonomy snippets merged in 2026-10-01 -->
+<section id="the-gis-contract" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="the-gis-contract"><span class="header-section-number">8.1</span> The GIS contract</h3>
+<p>GIS gives you a table where each row is an object and each object has a geometry. One row, one shape, one set of attributes. I call this the GIS contract, and you can see it enforced everywhere: linked selection in QGIS, the <code>@data</code> slot in sp, the sticky geometry column in sf. It’s a useful guarantee. It’s also a prison.</p>
+<p>The moment you want to know something about a <em>part</em> of an object — the area of one ring in a multipolygon, the length of one linestring in a multi — you have to break the contract. You explode the object, badge every piece with an ID, track those IDs yourself. The moment you want to store per-vertex attributes (time on a GPS track, depth on a bathymetric contour, temperature on a sensor path) the contract has nothing for you. The geometry column is opaque: coordinates go in, coordinates come out, and there’s nowhere to hang additional information on the way through.</p>
+<p>Two objections come up whenever you suggest storing geometry in tables:</p>
+<ol type="1">
+<li><p>“You have to copy the metadata onto every coordinate row.” No.&nbsp;You need two tables, or three, and a join key. This is what databases have done since 1970.</p></li>
+<li><p>“You can’t properly store polygons with holes.” You can — R’s <code>polypath()</code> function has supported winding and even-odd fill rules since R 2.12. The problem was that <code>ggplot2::geom_polygon()</code> used <code>grid.polygon()</code> instead of <code>grid.path()</code>, so holes rendered as filled. The geometry model was fine; the renderer was incomplete.</p></li>
+</ol>
+<p>There’s a practical consequence too: R’s <code>polygon()</code> function can only fill one colour at a time, which means sp had to draw every single object as a separate function call. The entire architecture of spatial plotting in R was shaped by a renderer limitation, not a data model choice. (Manifold GIS, by contrast, stores points, lines, and areas in a single “drawing” — all three topological types coexisting in one layer, breakable by query rather than by file format. Almost nobody else does this.)</p>
+<p>The more interesting problems are subtler. Copying metadata onto coordinates creates the risk that IDs and values get out of sync. The coordinate-order attribute and the grouping can be subsetted in ways that silently corrupt the geometry. And the ring model itself is susceptible to self-intersection — winding and even-odd rules disagree on star-shaped polygons, and neither corresponds to the point-in-polygon test you actually want.</p>
+</section>
+<section id="five-forms-of-the-same-data" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="five-forms-of-the-same-data"><span class="header-section-number">8.2</span> Five forms of the same data</h3>
+<p>There’s a spectrum of representations for the same spatial objects. Each form has different strengths, and converting between them is where the power lies.</p>
+<p><strong>1. Nested lists.</strong> This is what sp and sf use internally. A multipolygon is a list of lists of matrices. The physical nesting mirrors the logical hierarchy: object → part → ring → coordinates. It’s natural for storage but opaque to tabular operations. You can’t <code>filter()</code> a nested list.</p>
+<p><strong>2. Nested data frames.</strong> Using tidyr’s <code>nest()</code>, you can store each object’s geometry as a data frame inside a list column. One row per object, geometry tucked away as a tibble. This preserves the GIS contract at the top level while making the internals accessible to dplyr verbs. It’s a useful intermediate but doesn’t allow vertex de-duplication or topology.</p>
+<p><strong>3. Fortify (two tables).</strong> This is what <code>ggplot2::fortify()</code> did: one table of coordinates with columns for object ID, part ID, hole flag, and vertex order; one table of object attributes joined by ID. It breaks the GIS contract — objects now span multiple rows — but everything is flat, joinable, and plottable. Two tables, one join.</p>
+<p><strong>4. Branch (three tables).</strong> Separate the parts from the coordinates. An object table, a branch table (one row per ring or linestring, carrying hole status, parent ring, area, length, or whatever per-part attributes you need), and a coordinate table with branch ID and vertex order. Now branches are first-class entities. You can compute on them directly. A GPS track with multiple deployments becomes: objects (animals), branches (deployments), coordinates (fixes with timestamps).</p>
+<p><strong>5. Primitives (four tables).</strong> De-duplicate the vertices. Every unique coordinate gets a vertex ID, stored once. Branches or primitives (line segments, triangles) reference vertices by ID through a link table. Four tables: objects, primitives, links, vertices. This is where topology lives — shared boundaries are explicit, not coincidental. And it’s where the link to mesh representations becomes direct.</p>
+<p>The progression from form 1 to form 5 is a sequence of normalization steps, in the database sense. Each step makes the structure more explicit and more general, at the cost of needing joins to reassemble the original. The key transition is between forms 3 and 5: you go from “coordinates that happen to be the same” to “vertices that <em>are</em> the same, referenced by index.”</p>
+</section>
+<section id="rosetta-stone-the-same-entities-under-different-names" class="level3" data-number="8.3">
+<h3 data-number="8.3" class="anchored" data-anchor-id="rosetta-stone-the-same-entities-under-different-names"><span class="header-section-number">8.3</span> Rosetta stone: the same entities under different names</h3>
+<p>The same structural concepts recur across every spatial system, wearing different names. This table maps them:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 19%">
+<col style="width: 14%">
+<col style="width: 6%">
+<col style="width: 11%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>PostGIS</th>
+<th>sp</th>
+<th>sf</th>
+<th>ggplot2 fortify</th>
+<th>terra::geom</th>
+<th>GDAL</th>
+<th>silicate</th>
+<th>General term</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A thing with attributes</td>
+<td>feature</td>
+<td>Spatial*DataFrame row</td>
+<td>sf row</td>
+<td><code>id</code></td>
+<td><code>object</code></td>
+<td>Feature</td>
+<td>object</td>
+<td><strong>Object</strong></td>
+</tr>
+<tr class="even">
+<td>A connected piece of a thing</td>
+<td>element</td>
+<td>Polygons/Lines slot</td>
+<td>ring/linestring within geometry</td>
+<td><code>piece</code>/<code>group</code></td>
+<td><code>part</code></td>
+<td>Ring/subgeometry</td>
+<td>path</td>
+<td><strong>Branch</strong></td>
+</tr>
+<tr class="odd">
+<td>A location</td>
+<td>point</td>
+<td>coordinate matrix row</td>
+<td>coordinate</td>
+<td><code>long</code>/<code>lat</code></td>
+<td><code>x</code>/<code>y</code></td>
+<td>point</td>
+<td>vertex (unique) or coord (instance)</td>
+<td><strong>Vertex</strong></td>
+</tr>
+<tr class="even">
+<td>A topological atom</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>segment (1D) / triangle (2D)</td>
+<td><strong>Primitive</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ul>
+<li>sp conflated branches and objects at the class level (Polygons vs Polygon, Lines vs Line) but didn’t give branches first-class identity — you couldn’t attach attributes to a ring.</li>
+<li>sf improved the hole model (first ring = exterior, subsequent = holes) but kept geometry opaque via the <code>sfc</code> list-column. Branches still aren’t queryable entities.</li>
+<li>The <strong>Primitive</strong> row is empty for most systems because they don’t decompose below the branch level. This is precisely the gap that silicate, anglr, and the vertex-pool approach fill.</li>
+<li>GDAL’s internal model aligns most closely with the PostGIS column: features contain geometries, geometries contain rings/subgeometries, rings contain points.</li>
+</ul>
+<!-- 
+Consider: add gdalraster, wk, and geos columns? They map slightly differently:
+- wk: wk_handle() streams vertices, no named entity levels
+- geos: GEOSGeometry, GEOSCoordSequence — two levels, no branch concept
+- gdalraster: inherits GDAL model via OGR
+-->
+</section>
+<section id="the-step-that-changes-everything" class="level3" data-number="8.4">
+<h3 data-number="8.4" class="anchored" data-anchor-id="the-step-that-changes-everything"><span class="header-section-number">8.4</span> The step that changes everything</h3>
+<p>To get from branches to primitives, you do two things:</p>
+<ol type="1">
+<li><p><strong>De-duplicate vertices</strong> in coordinate space. Every unique (x, y) becomes a single row in the vertex table, with an ID.</p></li>
+<li><p><strong>Convert paths to a planar straight line graph (PSLG).</strong> Instead of “ring = ordered sequence of coordinates,” you have “segment = pair of vertex IDs.” The ring’s path becomes a chain of segments.</p></li>
+</ol>
+<p>Once you have a PSLG, new structures become available that nested lists can never express: arc-node topology (the TopoJSON model, where shared boundaries are stored once), constrained Delaunay triangulation (every polygon becomes a mesh of triangles sharing a vertex pool), and the doubly-connected edge list (faces, edges, and vertices with full adjacency information — the structure underlying the Atlantis ecosystem model I worked with at AAD via the rbgm package).</p>
+<p>This is exactly what rgl has always done. Every rgl rendering primitive — triangles, quads, line segments — is defined as indices into a coordinate array. The coordinates don’t have to be unique, but they <em>can</em> be, and when they are, you have a true mesh. Rgl includes ear-clipping triangulation to convert polygons into triangle surfaces, and those surfaces can wrap around in ways that GIS polygons never could.</p>
+<p>The realization that these are the same idea — the database normalization of spatial geometry and the indexed vertex pool of GPU renderers — was the seed of the silicate package.</p>
+</section>
+<section id="three-kinds-of-triangulation" class="level3" data-number="8.5">
+<h3 data-number="8.5" class="anchored" data-anchor-id="three-kinds-of-triangulation"><span class="header-section-number">8.5</span> Three kinds of triangulation</h3>
+<p>Once you have a vertex pool and a set of edges (a PSLG), you can triangulate — but the choice of algorithm determines what you get.</p>
+<p><strong>Delaunay triangulation</strong> satisfies the “empty circumcircle” condition: no vertex falls inside the circumscribed circle of any triangle. This maximizes the minimum angle across all triangles, producing well-shaped elements. It’s the right choice for interpolation and surface fitting, because well-shaped triangles give stable numerical results. But it ignores your input edges — polygon boundaries may be crossed by Delaunay edges, which means the triangulation doesn’t respect the shapes you started with.</p>
+<p><strong>Constrained Delaunay triangulation</strong> keeps all your input edges intact while being “as Delaunay as possible” everywhere else. You can also impose constraints on minimum triangle area and minimum interior angle, forcing the triangulator to add Steiner points (new vertices) to meet quality targets. This is what you want for meshing polygons: boundaries are preserved, interior density is controllable, and the resulting triangles are well-shaped enough for rendering and computation. In R, RTriangle wraps Shewchuk’s Triangle library for this. In Python, triangle and meshpy provide similar access.</p>
+<p><strong>Ear-clipping</strong> is the fast, simple alternative. Walk the polygon boundary, find “ears” (triangles formed by three consecutive vertices where no other vertex falls inside), clip them off, repeat. It’s O(n²), always preserves input edges, handles non-convex polygons, and needs no external library — rgl includes one. But it produces no interior vertices and makes no quality guarantees. The resulting triangles can be arbitrarily thin or oddly shaped. It’s fine for rendering flat polygons (where triangle quality doesn’t matter for visual appearance) but poor for surface fitting or finite-element work.</p>
+<p>The choice cascades from the application: ear-clipping for quick visualization, constrained Delaunay for meshing and draping, unconstrained Delaunay for interpolation from scattered points.</p>
+<!--
+R packages: RTriangle (constrained Delaunay), rgl (ear-clipping built in), 
+deldir (Delaunay + Voronoi), interp (Delaunay), geometry (n-dimensional via Qhull).
+Python: scipy.spatial.Delaunay (unconstrained), triangle (constrained), 
+meshpy (constrained, Shewchuk), mapbox_earcut (ear-clipping).
+
+The decido package provides ear-clipping for R via the mapbox earcut algorithm,
+faster than rgl's built-in for large polygons.
+-->
+</section>
+<section id="what-the-tables-buy-you" class="level3" data-number="8.6">
+<h3 data-number="8.6" class="anchored" data-anchor-id="what-the-tables-buy-you"><span class="header-section-number">8.6</span> What the tables buy you</h3>
+<p>Once geometry is decomposed into normalized tables, several things that are hard or impossible with nested structures become straightforward:</p>
+<p><strong>Per-entity attributes at the right level.</strong> On a triangulated terrain surface, elevation belongs on the vertex, not duplicated across every triangle that references it. On a GPS track, timestamps and sensor readings belong on the coordinate-instances, while deployment metadata belongs on the branch. On a multi-level administrative hierarchy, state boundaries and county boundaries can share vertices, and the containment relationship is just a join.</p>
+<p><strong>Database portability.</strong> A set of normalized tables transfers directly to and from any database without specialist spatial types. You can store a full topological spatial dataset in SQLite, PostgreSQL, or DuckDB using nothing but standard tables and integer foreign keys. No geometry columns, no WKB, no spatial extensions required. Reading it back needs no special tools — just joins.</p>
+<p><strong>Round-tripping through different systems.</strong> The same decomposition can reconstruct sp objects, sf objects, ggplot2 aesthetics, rgl meshes, or GeoJSON. A cascading inner join rebuilds the fortify table; a cascading semi-join propagates a subset from the object table down through the hierarchy. The normalized form is the universal intermediate.</p>
+<p><strong>Topology.</strong> Change one vertex and every primitive that references it moves. Shared boundaries between adjacent polygons are stored once — edit once, both sides update. This isn’t exotic; it’s how every CAD system and game engine works. GIS just never adopted it at the format level, and the nested-list representations in R actively prevent it.</p>
+</section>
+<section id="the-dream-that-partially-came-true" class="level3" data-number="8.7">
+<h3 data-number="8.7" class="anchored" data-anchor-id="the-dream-that-partially-came-true"><span class="header-section-number">8.7</span> The dream that partially came true</h3>
+<p>Back when ggplot2 had just appeared and <code>fortify()</code> was being frowned upon by the “spatial is special” crowd, I could see something that seemed both obvious and unrealized. If you have a data frame of coordinates with group IDs, you already have geometry. The grammar of graphics knows this — you assign x, y, group, fill, and it draws polygons. You don’t need a geometry column. You need a <em>convention</em>.</p>
+<p>I imagined an API like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>track_df <span class="sc">|&gt;</span> <span class="fu">group_by</span>(tag_id, deployment) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(timestamp) <span class="sc">|&gt;</span> <span class="fu">linearize</span>(x, y)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>poly_df <span class="sc">|&gt;</span> <span class="fu">group_by</span>(id, part) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(order) <span class="sc">|&gt;</span> <span class="fu">polypatherize</span>(long, lat)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then pipe to a driver at the end — <code>as_sf()</code>, <code>as_sp()</code>, <code>as_geojson()</code>, <code>as_wkt()</code> — to get the right format for a given application. The grouped, arranged data frame <em>is</em> the geometry; the output format is just a serialization choice.</p>
+<p>Pieces of this vision have since appeared. The sfheaders package builds sf objects from flat data frames at high speed. The wk package provides a streaming handler protocol for coordinate sequences. The geos package gives you GEOS operations on coordinate vectors. But the unifying “geometry is just a grouped data frame” idiom — where the same pipe chain can produce a line, a polygon, a mesh, or a trip object depending on what you ask for — never quite crystallized into one package.</p>
+<p>The reason, I think, is that it requires solving the vertex-identity problem first. You need to know when two coordinates at the same position are the <em>same vertex</em> (shared boundary) versus merely <em>coincident</em> (overlapping features). Flat tables don’t carry that information. You need the fourth form — the primitives model with a vertex pool — and you need it to be lightweight enough that people use it by default rather than as a special-purpose tool.</p>
+<p>That’s the direction the next generation of spatial infrastructure is heading. The wk vertex-pool proposal, the sidecar topology model we’ve been discussing, and the n-dimensional vertex table that breaks free of the XYZM cul-de-sac — these are all attempts to finish what fortify started: geometry as tables, with topology you can opt into.</p>
+<!-- 
+## Lineage notes (not for publication)
+
+The package progression: spbabel (2015, two-table round-trip sp↔fortify) → 
+gris (2016, four-table "o, b, bXv, v joinable chain") → rangl (2016, primitives + 3D) → 
+silicate (2017–present, PATH/SC/SC0/TRI/ARC models as formal S3 classes).
+
+polyggon (2016) was the epiphany package: proved that flat-table polygons + 
+polypath(rule="evenodd") rendered holes correctly in ggplot2 via geom_holygon(). 
+The hole problem was never a data-model problem, it was a renderer problem.
+ggplot2 fixed it natively in v3.2.0 (2019) with the subgroup aesthetic.
+
+ggpolypath was the CRAN version of the same idea; now deprecated in favour of 
+ggplot2's native support.
+
+The "dozens of trajectory packages" observation (2016) remains true in 2026.
+-->
+</section>
+</section>
+<section id="the-globe-in-the-room" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="the-globe-in-the-room"><span class="header-section-number">9</span> The globe in the room</h2>
+<!-- harvested from r-gris/rogue-book, 02-poly3d.Rmd -->
+<!-- target: Ch 8 case study, or Ch 12 "Patterns for real work" -->
+<!-- status: DRAFT -->
+<section id="from-flat-polygons-to-a-3d-globe" class="level3" data-number="9.1">
+<h3 data-number="9.1" class="anchored" data-anchor-id="from-flat-polygons-to-a-3d-globe"><span class="header-section-number">9.1</span> From flat polygons to a 3D globe</h3>
+<p>The argument for decomposing geometry into tables can feel abstract until you try to do something that nested structures actively prevent. Putting polygons on a sphere is that something.</p>
+<p>Start with a standard polygon dataset — country boundaries, the kind of thing every GIS tutorial begins with. In any nested-list representation (sp, sf), the geometry is opaque. You can ask for coordinates, but you get them as a side effect — extracted into a matrix, detached from everything else. You can’t <em>modify</em> the coordinates in place without reconstructing the entire nested hierarchy.</p>
+<p>Now try this: convert every vertex from longitude-latitude to Cartesian XYZ on a sphere. The maths is simple — a handful of trig functions:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>llh2xyz <span class="ot">&lt;-</span> <span class="cf">function</span>(lonlatheight, <span class="at">rad =</span> <span class="dv">6378137</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  cosLat <span class="ot">&lt;-</span> <span class="fu">cos</span>(lonlatheight[, <span class="dv">2</span>] <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  sinLat <span class="ot">&lt;-</span> <span class="fu">sin</span>(lonlatheight[, <span class="dv">2</span>] <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  cosLon <span class="ot">&lt;-</span> <span class="fu">cos</span>(lonlatheight[, <span class="dv">1</span>] <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  sinLon <span class="ot">&lt;-</span> <span class="fu">sin</span>(lonlatheight[, <span class="dv">1</span>] <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  rad <span class="ot">&lt;-</span> rad <span class="sc">+</span> lonlatheight[, <span class="dv">3</span>]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">x =</span> rad <span class="sc">*</span> cosLat <span class="sc">*</span> cosLon,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> rad <span class="sc">*</span> cosLat <span class="sc">*</span> sinLon,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">z =</span> rad <span class="sc">*</span> sinLat)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With the geometry in tables, adding the third dimension is just adding columns. The vertex table has x and y; we compute X, Y, Z and store them right there, on the same rows, alongside the originals. No reconstruction, no recursion, no special methods. One <code>mutate()</code> call.</p>
+<p>But plotting XYZ points is just a point cloud. To see polygons on a sphere, you need connectivity — which vertices are linked, which triangles tile which surfaces. This is where the table decomposition pays off a second time.</p>
+</section>
+<section id="from-paths-to-meshes" class="level3" data-number="9.2">
+<h3 data-number="9.2" class="anchored" data-anchor-id="from-paths-to-meshes"><span class="header-section-number">9.2</span> From paths to meshes</h3>
+<p>A polygon boundary is a path: an ordered sequence of vertices forming a closed ring. To render that path as a filled surface in 3D, you need triangles. To get triangles, you need a Planar Straight Line Graph — the path decomposed into pairs of vertex indices, each pair defining one edge.</p>
+<p>Building the PSLG from the table representation is mechanical: walk the branch table, pair consecutive vertex IDs, collect all segments. The vertex pool and the link table already have everything you need. With nested lists you’d be writing recursive extractors; with tables it’s a grouped <code>lead()</code>/<code>lag()</code> operation.</p>
+<p>Feed the PSLG to a constrained Delaunay triangulator (RTriangle in R, wrapping Shewchuk’s Triangle library), and you get back a set of triangles defined as triples of vertex indices into your coordinate array — which is exactly the format that OpenGL (and rgl in R) wants.</p>
+<p>The first result is ugly. The triangles span the full extent of each polygon with no internal vertices, so on a sphere they cut straight through the interior instead of following the curvature. They’re flat facets stretched across what should be a curved surface.</p>
+<p>The fix is to set a maximum triangle area in the triangulator. This forces it to add Steiner points — new vertices inside the polygon — ensuring no triangle is larger than a threshold. With enough internal structure, the triangles are small enough to follow the sphere’s curvature. The polygons <em>drape</em>.</p>
+<p>The moment that first globe rendered — country polygons in randomized greys, tessellated and wrapped around a sphere, rotating in an rgl window — was the moment the table decomposition stopped being a theoretical argument and became a visual one. You could see, literally, what the tables bought you: the ability to move between representations (path → PSLG → constrained triangulation → indexed mesh) without ever leaving the relational model, and the ability to add dimensions (lon-lat → XYZ → XYZ-on-terrain) by operating on the vertex table directly.</p>
+</section>
+<section id="the-terrain-extension" class="level3" data-number="9.3">
+<h3 data-number="9.3" class="anchored" data-anchor-id="the-terrain-extension"><span class="header-section-number">9.3</span> The terrain extension</h3>
+<p>The same technique applies to real topography. Extract polygons for a region, project vertices to a local coordinate system, triangulate with a minimum area constraint, then look up elevation from a DEM at every vertex (including the Steiner points the triangulator added). Now your polygons aren’t just on a sphere — they’re draped over mountains and valleys, with the mesh density controlled by the area threshold.</p>
+<p>This is what Manifold GIS did with its “terrain” objects, and what modern 3D tiling systems (Cesium 3D Tiles, Mapbox terrain) do at web scale. The principle is identical: geometry as indexed vertices, connectivity as integer references, and elevation (or any other attribute) as a column on the vertex table. The difference is that with the table decomposition, you don’t need a specialized terrain engine — you need a triangulator and a vertex table.</p>
+<!--
+## Implementation notes (not for publication)
+
+Original code used: gris::gris() for table decomposition, gris::mkpslg() for PSLG 
+construction, RTriangle::triangulate() for constrained Delaunay, rgl::triangles3d() 
+for rendering.
+
+Modern equivalent would use: silicate::PATH() or silicate::TRI(), or build PSLG 
+directly from sf via sfheaders + manual segment pairing. anglr package wraps 
+some of this. RTriangle still the go-to triangulator in R.
+
+The "minimum area" parameter in RTriangle::triangulate(a = 9) is in the units 
+of the input coordinates — here square degrees, which is wild but works for 
+the demonstration.
+
+Tasmania example used SRTM data + GADM boundaries + laea projection.
+Never completed but the approach is sound.
+-->
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./05-same-problem.html" class="pagination-link" aria-label="Same problem, different clothes">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Same problem, different clothes</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./07-extraction.html" class="pagination-link" aria-label="Extraction and rasterization">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extraction and rasterization</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/06-geometry.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
