@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-e3a0307bf87dea633ae254d873c6233f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -275,6 +275,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#from-paths-to-meshes" id="toc-from-paths-to-meshes" class="nav-link" data-scroll-target="#from-paths-to-meshes"><span class="header-section-number">9.2</span> From paths to meshes</a></li>
   <li><a href="#the-terrain-extension" id="toc-the-terrain-extension" class="nav-link" data-scroll-target="#the-terrain-extension"><span class="header-section-number">9.3</span> The terrain extension</a></li>
   </ul></li>
+  <li><a href="#the-array-objection" id="toc-the-array-objection" class="nav-link" data-scroll-target="#the-array-objection"><span class="header-section-number">10</span> The array objection</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/06-geometry.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -536,9 +537,24 @@ the demonstration.
 Tasmania example used SRTM data + GADM boundaries + laea projection.
 Never completed but the approach is sound.
 -->
-
-
 </section>
+</section>
+<section id="the-array-objection" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="the-array-objection"><span class="header-section-number">10</span> The array objection</h2>
+<!-- source: Michael, project thread 2026-10-01 -->
+<!-- target: Ch 8 (geometry as topology), after "What the tables buy you" -->
+<!-- status: SEED -->
+<p>The shade cast on “geometry is tables” does not only come from the GIS side. The array community casts it too, and the strawman is the same each time: a fully materialised table of every value and every coordinate is not practical, so tables are for small data and arrays are for real data.</p>
+<p>That argument ignores two things. First, a table cell can hold an encoded chunk. A row that says “tile (3, 7), compressed bytes, these dimensions, this dtype” is a perfectly good row, and a table of such rows is what every chunked array store already is underneath, whether it admits it or not. Second, the thing that makes tables work is not materialisation, it is relations. Arrays have the same secret: dimensions are shared keys, coordinates are lookup tables, a labelled array is a join waiting to happen. Nothing has to be one to one. A vertex table and a chunk table are the same kind of object, differing only in what the key points at.</p>
+<p>So the table decomposition is not an alternative to arrays. It is the description of how arrays and geometries relate to each other, and it is the part both camps leave implicit.</p>
+<!--
+Notes: ties to the grid taxonomy (ch04) where xarray materialises coordinates and
+GDAL keeps six numbers: that is the same materialise-vs-relate choice. Also ties
+to ch09 sparse structures: the rasterized-polygon intermediate is a table of
+(cell, weight) rows, i.e. a relation between a geometry and an array.
+-->
+
+
 </section>
 
 </main> <!-- /main -->

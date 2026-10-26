@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -79,7 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-e3a0307bf87dea633ae254d873c6233f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -284,6 +284,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#why-it-works" id="toc-why-it-works" class="nav-link" data-scroll-target="#why-it-works"><span class="header-section-number">6.3</span> Why it works</a></li>
   <li><a href="#what-this-demonstrates" id="toc-what-this-demonstrates" class="nav-link" data-scroll-target="#what-this-demonstrates"><span class="header-section-number">6.4</span> What this demonstrates</a></li>
   </ul></li>
+  <li><a href="#longlat-thinking" id="toc-longlat-thinking" class="nav-link" data-scroll-target="#longlat-thinking"><span class="header-section-number">7</span> Longlat thinking</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/mdsumner/a-book/edit/main/02-crs.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/mdsumner/a-book/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -535,9 +536,25 @@ comes from direct experience at AAD working with these datasets via raadtools.
   the warped version is regular in LAEA — the grid taxonomy matters for 
   what statistics you can compute naively
 -->
-
-
 </section>
+</section>
+<section id="longlat-thinking" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="longlat-thinking"><span class="header-section-number">7</span> Longlat thinking</h2>
+<!-- source: Michael, project thread 2026-10-01 -->
+<!-- target: Ch 2 (What is a CRS?) closing section, or Ch 4 grid taxonomy -->
+<!-- status: SEED -->
+<p>Everyone knows Web Mercator is the wrong map. Fewer people notice that the NetCDF and array world defaults to the same mistake in a different costume: longlat thinking. A global 0.25 degree grid is treated as if it were the Earth, coordinates are degrees, and area, distance and neighbourhood are read straight off the array indices.</p>
+<p>A regular grid is a regular grid. Its cells are equal in index space, and that is all the array knows. The relationship between that grid and the oblate spheroid is a separate topic, and it is a coordinate transformation, not a property of the data. Longlat is a projection with a family (equirectangular), a centre (0, 0) and a datum, and it distorts area as badly as Mercator does near the poles, just in a different pattern. Mercator-webmap thinking and longlat-array thinking are the same error: mistaking one particular projected grid for the sphere.</p>
+<p>This is why the OISST example (frag-ch02-equal-area-warp-stats) needs cos(lat) weights in longlat and none in LAEA. The weights are not a correction for a defect in the data. They are the Jacobian of a projection that was chosen by default and never named.</p>
+<!--
+Notes: ties to grid taxonomy case (C) degenerate rectilinear, and to the Ch 2
+family/centre decomposition: longlat is +proj=longlat with lon_0=0, and it has
+a centre like everything else. Also to the Zarr seed (frag-ch10): the array
+model's default to longlat is a special case of assuming the world is
+rectilinear.
+-->
+
+
 </section>
 
 </main> <!-- /main -->
