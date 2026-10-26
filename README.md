@@ -37,6 +37,17 @@ Three threads run through every chapter:
 - `_quarto.yml` builds the book. `quarto render` produces `_book/`.
 - `notes/` holds reviews and reference transcripts that are not book text.
 
+## Scope
+
+The risk with a book like this is that it becomes one person's diatribe. The
+test for whether a topic belongs is simple: it must illustrate one of the three
+threads, with a dataset the author has actually worked with. If it passes, it is
+a section. If it only passes the first half, it is a blog post. If it passes
+neither, it is a conversation.
+
+The first edition is the eight chapters below. Anything that lands in the
+manifest as a seed for a deferred chapter waits for a second pass.
+
 ## First-edition outline
 
 Part I: Where
